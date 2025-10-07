@@ -1,0 +1,336 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global Dark Theme Styles */
+body {
+  background-color: #1a1a1a;
+  color: #F7F7F7;
+}
+
+/* Ant Design Input Field Overrides for Dark Theme */
+.ant-input {
+  background-color: #2a2a2a !important;
+  border-color: #404040 !important;
+  color: #F7F7F7 !important;
+}
+
+.ant-input:hover {
+  border-color: #00B58E !important;
+  background-color: #2a2a2a !important;
+}
+
+.ant-input:focus {
+  border-color: #00B58E !important;
+  box-shadow: 0 0 0 2px rgba(0, 181, 142, 0.2) !important;
+  background-color: #2a2a2a !important;
+}
+
+.ant-input-password {
+  background-color: #2a2a2a !important;
+  border-color: #404040 !important;
+}
+
+.ant-input-password .ant-input {
+  background-color: transparent !important;
+  border: none !important;
+  color: #F7F7F7 !important;
+}
+
+.ant-input-password:hover {
+  border-color: #00B58E !important;
+}
+
+.ant-input-password:focus-within {
+  border-color: #00B58E !important;
+  box-shadow: 0 0 0 2px rgba(0, 181, 142, 0.2) !important;
+}
+
+/* Input wrapper consistency - fix for affix wrappers */
+.ant-input-affix-wrapper {
+  background-color: #2a2a2a !important;
+  border-color: #404040 !important;
+}
+
+.ant-input-affix-wrapper:hover {
+  border-color: #00B58E !important;
+  background-color: #2a2a2a !important;
+}
+
+.ant-input-affix-wrapper:focus-within {
+  border-color: #00B58E !important;
+  box-shadow: 0 0 0 2px rgba(0, 181, 142, 0.2) !important;
+  background-color: #2a2a2a !important;
+}
+
+.ant-input-affix-wrapper .ant-input {
+  background-color: transparent !important;
+  border: none !important;
+  color: #F7F7F7 !important;
+}
+
+/* Input placeholder text */
+.ant-input::placeholder {
+  color: #888888 !important;
+}
+
+/* Form labels */
+.ant-form-item-label > label {
+  color: #F7F7F7 !important;
+}
+
+/* Form validation error text */
+.ant-form-item-explain-error {
+  color: #ff6b6b !important;
+}
+
+/* Password visibility icon */
+.ant-input-password-icon {
+  color: #888888 !important;
+}
+
+.ant-input-password-icon:hover {
+  color: #00B58E !important;
+}
+
+/* Input prefix icons */
+.ant-input-prefix {
+  color: #00B58E !important;
+}
+
+/* Card background for better contrast */
+.registration-card {
+  background-color: #2d2d2d !important;
+  border: 1px solid #404040 !important;
+}
+
+/* Button hover states */
+.ant-btn-primary:hover {
+  background-color: #009a7a !important;
+  border-color: #009a7a !important;
+}
+
+/* Alert components for dark theme */
+.ant-alert {
+  background-color: #2a2a2a !important;
+  border-color: #404040 !important;
+}
+
+.ant-alert-error {
+  background-color: #2d1b1b !important;
+  border-color: #ff4d4f !important;
+}
+
+.ant-alert-error .ant-alert-message {
+  color: #ff6b6b !important;
+}
+
+/* Typography colors for dark theme */
+.ant-typography {
+  color: #F7F7F7 !important;
+}
+
+/* Link colors */
+a {
+  color: #1D459A !important;
+}
+
+a:hover {
+  color: #2d5bb3 !important;
+}
+
+/* Ant Design Menu Dark Theme Overrides */
+.ant-menu-dark {
+  background-color: transparent !important;
+}
+
+.ant-menu-dark .ant-menu-item {
+  background-color: transparent !important;
+  color: #9CA3AF !important;
+  margin: 4px 8px !important;
+  border-radius: 8px !important;
+  height: 40px !important;
+  line-height: 40px !important;
+}
+
+.ant-menu-dark .ant-menu-item:hover {
+  background-color: #374151 !important;
+  color: #F7F7F7 !important;
+}
+
+.ant-menu-dark .ant-menu-item-selected {
+  background-color: #00B58E !important;
+  color: #FFFFFF !important;
+}
+
+.ant-menu-dark .ant-menu-item-selected:hover {
+  background-color: #009a7a !important;
+  color: #FFFFFF !important;
+}
+
+/* Dropdown menu dark theme */
+.ant-dropdown {
+  background-color: #1F2937 !important;
+}
+
+.ant-dropdown .ant-dropdown-menu {
+  background-color: #1F2937 !important;
+  border: 1px solid #374151 !important;
+}
+
+.ant-dropdown .ant-dropdown-menu-item {
+  color: #F7F7F7 !important;
+}
+
+.ant-dropdown .ant-dropdown-menu-item:hover {
+  background-color: #374151 !important;
+}
+
+.ant-dropdown .ant-dropdown-menu-item-divider {
+  background-color: #374151 !important;
+}
+
+/* Statistics component styling */
+.ant-statistic-title {
+  color: #9CA3AF !important;
+}
+
+.ant-statistic-content {
+  color: #F7F7F7 !important;
+}
+
+/* Select dropdown styling for dark theme */
+.ant-select-dropdown {
+  background-color: #1F2937 !important;
+  border: 1px solid #374151 !important;
+}
+
+.ant-select-item {
+  color: #F7F7F7 !important;
+}
+
+.ant-select-item:hover {
+  background-color: #374151 !important;
+}
+
+.ant-select-item-option-selected {
+  background-color: #00B58E !important;
+  color: #FFFFFF !important;
+}
+
+/* Upload dragger styling */
+.ant-upload-drag {
+  background-color: #2a2a2a !important;
+  border-color: #404040 !important;
+}
+
+.ant-upload-drag:hover {
+  border-color: #00B58E !important;
+}
+
+.ant-upload-drag.ant-upload-drag-hover {
+  border-color: #00B58E !important;
+}
+
+/* Tag styling for dark theme */
+.ant-tag {
+  background-color: #374151 !important;
+  border-color: #4B5563 !important;
+  color: #F7F7F7 !important;
+}
+
+/* Spin component for dark theme */
+.ant-spin-dot-item {
+  background-color: #00B58E !important;
+}
+
+/* Table styling for dark theme */
+.dark-table .ant-table {
+  background-color: transparent !important;
+}
+
+.dark-table .ant-table-thead > tr > th {
+  background-color: #374151 !important;
+  border-bottom: 1px solid #4B5563 !important;
+  color: #F7F7F7 !important;
+}
+
+.dark-table .ant-table-tbody > tr > td {
+  background-color: transparent !important;
+  border-bottom: 1px solid #374151 !important;
+  color: #F7F7F7 !important;
+}
+
+.dark-table .ant-table-tbody > tr:hover > td {
+  background-color: #374151 !important;
+}
+
+.dark-table .ant-pagination {
+  color: #F7F7F7 !important;
+}
+
+.dark-table .ant-pagination .ant-pagination-item {
+  background-color: #374151 !important;
+  border-color: #4B5563 !important;
+}
+
+.dark-table .ant-pagination .ant-pagination-item a {
+  color: #F7F7F7 !important;
+}
+
+.dark-table .ant-pagination .ant-pagination-item-active {
+  background-color: #00B58E !important;
+  border-color: #00B58E !important;
+}
+
+.dark-table .ant-pagination .ant-pagination-item-active a {
+  color: #FFFFFF !important;
+}
+
+/* Tabs styling for dark theme */
+.dark-tabs .ant-tabs-nav {
+  background-color: transparent !important;
+}
+
+.dark-tabs .ant-tabs-tab {
+  color: #9CA3AF !important;
+  background-color: transparent !important;
+}
+
+.dark-tabs .ant-tabs-tab:hover {
+  color: #F7F7F7 !important;
+}
+
+.dark-tabs .ant-tabs-tab-active {
+  color: #00B58E !important;
+}
+
+.dark-tabs .ant-tabs-ink-bar {
+  background-color: #00B58E !important;
+}
+
+.dark-tabs .ant-tabs-content {
+  background-color: transparent !important;
+}
+
+/* Modal styling for dark theme */
+.ant-modal .ant-modal-content {
+  background-color: #1F2937 !important;
+}
+
+.ant-modal .ant-modal-header {
+  background-color: #1F2937 !important;
+  border-bottom: 1px solid #374151 !important;
+}
+
+.ant-modal .ant-modal-title {
+  color: #F7F7F7 !important;
+}
+
+.ant-modal .ant-modal-close {
+  color: #9CA3AF !important;
+}
+
+.ant-modal .ant-modal-close:hover {
+  color: #F7F7F7 !important;
+}
