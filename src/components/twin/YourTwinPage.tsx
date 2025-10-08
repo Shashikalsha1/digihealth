@@ -1242,7 +1242,7 @@ const YourTwinPage: React.FC = () => {
 
         {/* Right Side - Live Data */}
         <Col xs={24} lg={12}>
-          <div className="space-y-4">
+          <div className="space-y-4 mt-6">
             {/* Health Metrics Grid */}
             <Row gutter={[16, 16]}>
               {/* Heart Rate */}
@@ -1466,6 +1466,7 @@ const YourTwinPage: React.FC = () => {
         activeKey={activeTabKey}
         onChange={(key) => setActiveTabKey(key)}
         type="card"
+        className="mt-6"
         items={[
             {
               key: 'heart_rate',
@@ -1476,10 +1477,12 @@ const YourTwinPage: React.FC = () => {
                 </span>
               ),
               children: (
-                <HeartRateChart
-                  data={getHistoricalData('heart_rate')}
-                  unit="bpm"
-                />
+                <div className="mt-6">
+                  <HeartRateChart
+                    data={getHistoricalData('heart_rate')}
+                    unit="bpm"
+                  />
+                </div>
               )
             },
             {
@@ -1491,7 +1494,7 @@ const YourTwinPage: React.FC = () => {
                 </span>
               ),
               children: (
-                <div className="space-y-6">
+                <div className="space-y-6 mt-6">
                   <div
                     className="flex items-center justify-center"
                     onMouseDown={(e) => e.stopPropagation()}
@@ -1585,19 +1588,21 @@ const YourTwinPage: React.FC = () => {
                 </span>
               ),
               children: (
-                <GenericChart
-                  data={getHistoricalData('temperature')}
-                  unit="°C"
-                  title="Body Temperature"
-                  color="#EF4444"
-                  zones={[
-                    { label: 'Low', range: '<36.5', color: '#3B82F6', min: 35, max: 36.5 },
-                    { label: 'Normal', range: '36.5-37.2', color: '#10B981', min: 36.5, max: 37.2 },
-                    { label: 'Elevated', range: '37.2-37.8', color: '#F59E0B', min: 37.2, max: 37.8 },
-                    { label: 'Fever', range: '>37.8', color: '#EF4444', min: 37.8, max: 40 }
-                  ]}
-                  showZoneDistribution={true}
-                />
+                <div className="mt-6">
+                  <GenericChart
+                    data={getHistoricalData('temperature')}
+                    unit="°C"
+                    title="Body Temperature"
+                    color="#EF4444"
+                    zones={[
+                      { label: 'Low', range: '<36.5', color: '#3B82F6', min: 35, max: 36.5 },
+                      { label: 'Normal', range: '36.5-37.2', color: '#10B981', min: 36.5, max: 37.2 },
+                      { label: 'Elevated', range: '37.2-37.8', color: '#F59E0B', min: 37.2, max: 37.8 },
+                      { label: 'Fever', range: '>37.8', color: '#EF4444', min: 37.8, max: 40 }
+                    ]}
+                    showZoneDistribution={true}
+                  />
+                </div>
               )
             },
             {
@@ -1609,18 +1614,20 @@ const YourTwinPage: React.FC = () => {
                 </span>
               ),
               children: (
-                <GenericChart
-                  data={getHistoricalData('oxygen_level')}
-                  unit="%"
-                  title="Blood Oxygen Level"
-                  color="#10B981"
-                  zones={[
-                    { label: 'Low', range: '<95', color: '#EF4444', min: 90, max: 95 },
-                    { label: 'Normal', range: '95-98', color: '#10B981', min: 95, max: 98 },
-                    { label: 'Optimal', range: '98-100', color: '#00B58E', min: 98, max: 101 }
-                  ]}
-                  showZoneDistribution={true}
-                />
+                <div className="mt-6">
+                  <GenericChart
+                    data={getHistoricalData('oxygen_level')}
+                    unit="%"
+                    title="Blood Oxygen Level"
+                    color="#10B981"
+                    zones={[
+                      { label: 'Low', range: '<95', color: '#EF4444', min: 90, max: 95 },
+                      { label: 'Normal', range: '95-98', color: '#10B981', min: 95, max: 98 },
+                      { label: 'Optimal', range: '98-100', color: '#00B58E', min: 98, max: 101 }
+                    ]}
+                    showZoneDistribution={true}
+                  />
+                </div>
               )
             },
             {
@@ -1632,19 +1639,21 @@ const YourTwinPage: React.FC = () => {
                 </span>
               ),
               children: (
-                <GenericChart
-                  data={getHistoricalData('steps')}
-                  unit="steps"
-                  title="Daily Steps"
-                  color="#1D459A"
-                  zones={[
-                    { label: 'Sedentary', range: '<5000', color: '#EF4444', min: 0, max: 5000 },
-                    { label: 'Low Active', range: '5000-8000', color: '#F59E0B', min: 5000, max: 8000 },
-                    { label: 'Active', range: '8000-12000', color: '#10B981', min: 8000, max: 12000 },
-                    { label: 'Highly Active', range: '>12000', color: '#00B58E', min: 12000, max: 25000 }
-                  ]}
-                  showZoneDistribution={true}
-                />
+                <div className="mt-6">
+                  <GenericChart
+                    data={getHistoricalData('steps')}
+                    unit="steps"
+                    title="Daily Steps"
+                    color="#1D459A"
+                    zones={[
+                      { label: 'Sedentary', range: '<5000', color: '#EF4444', min: 0, max: 5000 },
+                      { label: 'Low Active', range: '5000-8000', color: '#F59E0B', min: 5000, max: 8000 },
+                      { label: 'Active', range: '8000-12000', color: '#10B981', min: 8000, max: 12000 },
+                      { label: 'Highly Active', range: '>12000', color: '#00B58E', min: 12000, max: 25000 }
+                    ]}
+                    showZoneDistribution={true}
+                  />
+                </div>
               )
             },
             {
@@ -1656,23 +1665,24 @@ const YourTwinPage: React.FC = () => {
                 </span>
               ),
               children: (
-                <GenericChart
-                  data={getHistoricalData('sleep_hours')}
-                  unit="hours"
-                  title="Sleep Duration"
-                  color="#8B5CF6"
-                  zones={[
-                    { label: 'Insufficient', range: '<6', color: '#EF4444', min: 0, max: 6 },
-                    { label: 'Adequate', range: '6-8', color: '#10B981', min: 6, max: 8 },
-                    { label: 'Optimal', range: '8-9', color: '#00B58E', min: 8, max: 9 },
-                    { label: 'Excessive', range: '>9', color: '#F59E0B', min: 9, max: 12 }
-                  ]}
-                  showZoneDistribution={true}
-                />
+                <div className="mt-6">
+                  <GenericChart
+                    data={getHistoricalData('sleep_hours')}
+                    unit="hours"
+                    title="Sleep Duration"
+                    color="#8B5CF6"
+                    zones={[
+                      { label: 'Insufficient', range: '<6', color: '#EF4444', min: 0, max: 6 },
+                      { label: 'Adequate', range: '6-8', color: '#10B981', min: 6, max: 8 },
+                      { label: 'Optimal', range: '8-9', color: '#00B58E', min: 8, max: 9 },
+                      { label: 'Excessive', range: '>9', color: '#F59E0B', min: 9, max: 12 }
+                    ]}
+                    showZoneDistribution={true}
+                  />
+                </div>
               )
             }
         ]}
-        className="custom-tabs"
       />
     </Card>
   );
