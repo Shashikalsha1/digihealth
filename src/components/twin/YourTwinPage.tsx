@@ -239,10 +239,43 @@ const YourTwinPage: React.FC = () => {
         }
       }
 
-      const value = selectedZone.min + Math.random() * (selectedZone.max - selectedZone.min);
+      const detailedReadings = [];
+      const readingsCount = Math.floor(Math.random() * 6) + 5;
+
+      for (let j = 0; j < readingsCount; j++) {
+        const hour = Math.floor(Math.random() * 24);
+        const minute = Math.floor(Math.random() * 60);
+        const timestamp = new Date(date);
+        timestamp.setHours(hour, minute, 0, 0);
+
+        const random = Math.random();
+        let cumulativeWeight = 0;
+        let selectedZone = zones[1];
+
+        for (const zone of zones) {
+          cumulativeWeight += zone.weight;
+          if (random <= cumulativeWeight) {
+            selectedZone = zone;
+            break;
+          }
+        }
+
+        const value = selectedZone.min + Math.random() * (selectedZone.max - selectedZone.min);
+        detailedReadings.push({
+          time: timestamp.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+          value: Math.round(value),
+          timestamp: timestamp
+        });
+      }
+
+      detailedReadings.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+      const avgValue = Math.round(detailedReadings.reduce((sum, r) => sum + r.value, 0) / detailedReadings.length);
+
       data.push({
         date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        value: Math.round(value)
+        value: avgValue,
+        fullDate: date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }),
+        detailedReadings: detailedReadings
       });
     }
     return data;
@@ -273,10 +306,43 @@ const YourTwinPage: React.FC = () => {
         }
       }
 
-      const value = selectedZone.min + Math.random() * (selectedZone.max - selectedZone.min);
+      const detailedReadings = [];
+      const readingsCount = Math.floor(Math.random() * 6) + 5;
+
+      for (let j = 0; j < readingsCount; j++) {
+        const hour = Math.floor(Math.random() * 24);
+        const minute = Math.floor(Math.random() * 60);
+        const timestamp = new Date(date);
+        timestamp.setHours(hour, minute, 0, 0);
+
+        const random = Math.random();
+        let cumulativeWeight = 0;
+        let selectedZone = zones[1];
+
+        for (const zone of zones) {
+          cumulativeWeight += zone.weight;
+          if (random <= cumulativeWeight) {
+            selectedZone = zone;
+            break;
+          }
+        }
+
+        const value = selectedZone.min + Math.random() * (selectedZone.max - selectedZone.min);
+        detailedReadings.push({
+          time: timestamp.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+          value: parseFloat(value.toFixed(1)),
+          timestamp: timestamp
+        });
+      }
+
+      detailedReadings.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+      const avgValue = parseFloat((detailedReadings.reduce((sum, r) => sum + r.value, 0) / detailedReadings.length).toFixed(1));
+
       data.push({
         date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        value: parseFloat(value.toFixed(1))
+        value: avgValue,
+        fullDate: date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }),
+        detailedReadings: detailedReadings
       });
     }
     return data;
@@ -306,10 +372,43 @@ const YourTwinPage: React.FC = () => {
         }
       }
 
-      const value = selectedZone.min + Math.random() * (selectedZone.max - selectedZone.min);
+      const detailedReadings = [];
+      const readingsCount = Math.floor(Math.random() * 6) + 5;
+
+      for (let j = 0; j < readingsCount; j++) {
+        const hour = Math.floor(Math.random() * 24);
+        const minute = Math.floor(Math.random() * 60);
+        const timestamp = new Date(date);
+        timestamp.setHours(hour, minute, 0, 0);
+
+        const random = Math.random();
+        let cumulativeWeight = 0;
+        let selectedZone = zones[1];
+
+        for (const zone of zones) {
+          cumulativeWeight += zone.weight;
+          if (random <= cumulativeWeight) {
+            selectedZone = zone;
+            break;
+          }
+        }
+
+        const value = selectedZone.min + Math.random() * (selectedZone.max - selectedZone.min);
+        detailedReadings.push({
+          time: timestamp.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+          value: Math.round(value),
+          timestamp: timestamp
+        });
+      }
+
+      detailedReadings.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+      const avgValue = Math.round(detailedReadings.reduce((sum, r) => sum + r.value, 0) / detailedReadings.length);
+
       data.push({
         date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        value: Math.round(value)
+        value: avgValue,
+        fullDate: date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }),
+        detailedReadings: detailedReadings
       });
     }
     return data;
@@ -340,10 +439,43 @@ const YourTwinPage: React.FC = () => {
         }
       }
 
-      const value = selectedZone.min + Math.random() * (selectedZone.max - selectedZone.min);
+      const detailedReadings = [];
+      const readingsCount = Math.floor(Math.random() * 6) + 5;
+
+      for (let j = 0; j < readingsCount; j++) {
+        const hour = Math.floor(Math.random() * 24);
+        const minute = Math.floor(Math.random() * 60);
+        const timestamp = new Date(date);
+        timestamp.setHours(hour, minute, 0, 0);
+
+        const random = Math.random();
+        let cumulativeWeight = 0;
+        let selectedZone = zones[1];
+
+        for (const zone of zones) {
+          cumulativeWeight += zone.weight;
+          if (random <= cumulativeWeight) {
+            selectedZone = zone;
+            break;
+          }
+        }
+
+        const value = selectedZone.min + Math.random() * (selectedZone.max - selectedZone.min);
+        detailedReadings.push({
+          time: timestamp.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+          value: Math.round(value),
+          timestamp: timestamp
+        });
+      }
+
+      detailedReadings.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+      const avgValue = Math.round(detailedReadings.reduce((sum, r) => sum + r.value, 0) / detailedReadings.length);
+
       data.push({
         date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        value: Math.round(value)
+        value: avgValue,
+        fullDate: date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }),
+        detailedReadings: detailedReadings
       });
     }
     return data;
@@ -374,10 +506,43 @@ const YourTwinPage: React.FC = () => {
         }
       }
 
-      const value = selectedZone.min + Math.random() * (selectedZone.max - selectedZone.min);
+      const detailedReadings = [];
+      const readingsCount = Math.floor(Math.random() * 6) + 5;
+
+      for (let j = 0; j < readingsCount; j++) {
+        const hour = Math.floor(Math.random() * 24);
+        const minute = Math.floor(Math.random() * 60);
+        const timestamp = new Date(date);
+        timestamp.setHours(hour, minute, 0, 0);
+
+        const random = Math.random();
+        let cumulativeWeight = 0;
+        let selectedZone = zones[1];
+
+        for (const zone of zones) {
+          cumulativeWeight += zone.weight;
+          if (random <= cumulativeWeight) {
+            selectedZone = zone;
+            break;
+          }
+        }
+
+        const value = selectedZone.min + Math.random() * (selectedZone.max - selectedZone.min);
+        detailedReadings.push({
+          time: timestamp.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+          value: parseFloat(value.toFixed(1)),
+          timestamp: timestamp
+        });
+      }
+
+      detailedReadings.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+      const avgValue = parseFloat((detailedReadings.reduce((sum, r) => sum + r.value, 0) / detailedReadings.length).toFixed(1));
+
       data.push({
         date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        value: parseFloat(value.toFixed(1))
+        value: avgValue,
+        fullDate: date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }),
+        detailedReadings: detailedReadings
       });
     }
     return data;
@@ -894,6 +1059,17 @@ const YourTwinPage: React.FC = () => {
     const lineChartOptions = {
       responsive: true,
       maintainAspectRatio: false,
+      onClick: (event: any, elements: any) => {
+        if (elements && elements.length > 0) {
+          const dataIndex = elements[0].index;
+          setSelectedDayData({
+            ...data[dataIndex],
+            metricName: title,
+            unit: unit
+          });
+          setDetailModalVisible(true);
+        }
+      },
       plugins: {
         legend: {
           display: false
@@ -912,7 +1088,8 @@ const YourTwinPage: React.FC = () => {
               const zone = getZoneForValue(value);
               return [
                 `${title}: ${value} ${unit}`,
-                `Zone: ${zone.label}`
+                `Zone: ${zone.label}`,
+                'Click to view detailed readings'
               ];
             }
           }
@@ -971,6 +1148,17 @@ const YourTwinPage: React.FC = () => {
     const barChartOptions = {
       responsive: true,
       maintainAspectRatio: false,
+      onClick: (event: any, elements: any) => {
+        if (elements && elements.length > 0) {
+          const dataIndex = elements[0].index;
+          setSelectedDayData({
+            ...data[dataIndex],
+            metricName: title,
+            unit: unit
+          });
+          setDetailModalVisible(true);
+        }
+      },
       plugins: {
         legend: {
           display: false
@@ -987,7 +1175,10 @@ const YourTwinPage: React.FC = () => {
             label: function(context: any) {
               const value = context.parsed.y;
               const zone = getZoneForValue(value);
-              return `${value} ${unit} (${zone.label})`;
+              return [
+                `${value} ${unit} (${zone.label})`,
+                'Click to view detailed readings'
+              ];
             }
           }
         }
@@ -1958,6 +2149,35 @@ const YourTwinPage: React.FC = () => {
                       else if (value >= 60 && value < 100) status = { text: 'Normal', color: '#10B981' };
                       else if (value >= 100 && value < 140) status = { text: 'Elevated', color: '#F59E0B' };
                       else status = { text: 'High', color: '#EF4444' };
+                    } else if (selectedDayData.metricName === 'Blood Pressure (Systolic)') {
+                      if (value < 110) status = { text: 'Low', color: '#3B82F6' };
+                      else if (value >= 110 && value < 130) status = { text: 'Normal', color: '#10B981' };
+                      else if (value >= 130 && value < 145) status = { text: 'Elevated', color: '#F59E0B' };
+                      else status = { text: 'High', color: '#EF4444' };
+                    } else if (selectedDayData.metricName === 'Blood Pressure (Diastolic)') {
+                      if (value < 70) status = { text: 'Low', color: '#3B82F6' };
+                      else if (value >= 70 && value < 85) status = { text: 'Normal', color: '#10B981' };
+                      else if (value >= 85 && value < 95) status = { text: 'Elevated', color: '#F59E0B' };
+                      else status = { text: 'High', color: '#EF4444' };
+                    } else if (selectedDayData.metricName === 'Body Temperature') {
+                      if (value < 36.5) status = { text: 'Low', color: '#3B82F6' };
+                      else if (value >= 36.5 && value < 37.2) status = { text: 'Normal', color: '#10B981' };
+                      else if (value >= 37.2 && value < 37.8) status = { text: 'Elevated', color: '#F59E0B' };
+                      else status = { text: 'Fever', color: '#EF4444' };
+                    } else if (selectedDayData.metricName === 'Blood Oxygen Level') {
+                      if (value < 95) status = { text: 'Low', color: '#EF4444' };
+                      else if (value >= 95 && value < 98) status = { text: 'Normal', color: '#10B981' };
+                      else status = { text: 'Optimal', color: '#00B58E' };
+                    } else if (selectedDayData.metricName === 'Daily Steps') {
+                      if (value < 5000) status = { text: 'Sedentary', color: '#EF4444' };
+                      else if (value >= 5000 && value < 8000) status = { text: 'Low Active', color: '#F59E0B' };
+                      else if (value >= 8000 && value < 12000) status = { text: 'Active', color: '#10B981' };
+                      else status = { text: 'Highly Active', color: '#00B58E' };
+                    } else if (selectedDayData.metricName === 'Sleep Duration') {
+                      if (value < 6) status = { text: 'Insufficient', color: '#EF4444' };
+                      else if (value >= 6 && value < 8) status = { text: 'Adequate', color: '#10B981' };
+                      else if (value >= 8 && value < 9) status = { text: 'Optimal', color: '#00B58E' };
+                      else status = { text: 'Excessive', color: '#F59E0B' };
                     }
 
                     return (
