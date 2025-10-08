@@ -435,21 +435,21 @@ const YourTwinPage: React.FC = () => {
 
     return (
       <div className="space-y-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           <Card
             className="shadow-lg rounded-xl border-0"
             style={{ backgroundColor: '#111827', border: '1px solid #374151' }}
           >
             <div className="text-center">
-              <Text style={{ color: '#9CA3AF', fontSize: '14px' }}>Average</Text>
+              <Text style={{ color: '#9CA3AF', fontSize: '13px' }}>Average</Text>
               <div className="mt-2">
-                <Text strong style={{ color: '#10B981', fontSize: '32px' }}>
+                <Text strong style={{ color: '#10B981', fontSize: '28px' }}>
                   {avgValue.toFixed(0)}
                 </Text>
-                <Text style={{ color: '#9CA3AF', fontSize: '16px', marginLeft: '4px' }}>{unit}</Text>
+                <Text style={{ color: '#9CA3AF', fontSize: '14px', marginLeft: '4px' }}>{unit}</Text>
               </div>
-              <div className="mt-2">
-                <Heart className="w-6 h-6 mx-auto" style={{ color: '#10B981' }} />
+              <div className="mt-1">
+                <Heart className="w-5 h-5 mx-auto" style={{ color: '#10B981' }} />
               </div>
             </div>
           </Card>
@@ -459,15 +459,15 @@ const YourTwinPage: React.FC = () => {
             style={{ backgroundColor: '#111827', border: '1px solid #374151' }}
           >
             <div className="text-center">
-              <Text style={{ color: '#9CA3AF', fontSize: '14px' }}>Minimum</Text>
+              <Text style={{ color: '#9CA3AF', fontSize: '13px' }}>Minimum</Text>
               <div className="mt-2">
-                <Text strong style={{ color: '#3B82F6', fontSize: '32px' }}>
+                <Text strong style={{ color: '#3B82F6', fontSize: '28px' }}>
                   {minValue.toFixed(0)}
                 </Text>
-                <Text style={{ color: '#9CA3AF', fontSize: '16px', marginLeft: '4px' }}>{unit}</Text>
+                <Text style={{ color: '#9CA3AF', fontSize: '14px', marginLeft: '4px' }}>{unit}</Text>
               </div>
-              <div className="mt-2">
-                <Text style={{ color: '#9CA3AF', fontSize: '12px' }}>
+              <div className="mt-1">
+                <Text style={{ color: '#9CA3AF', fontSize: '11px' }}>
                   {getHeartRateZone(minValue).label}
                 </Text>
               </div>
@@ -479,62 +479,55 @@ const YourTwinPage: React.FC = () => {
             style={{ backgroundColor: '#111827', border: '1px solid #374151' }}
           >
             <div className="text-center">
-              <Text style={{ color: '#9CA3AF', fontSize: '14px' }}>Maximum</Text>
+              <Text style={{ color: '#9CA3AF', fontSize: '13px' }}>Maximum</Text>
               <div className="mt-2">
-                <Text strong style={{ color: '#EF4444', fontSize: '32px' }}>
+                <Text strong style={{ color: '#EF4444', fontSize: '28px' }}>
                   {maxValue.toFixed(0)}
                 </Text>
-                <Text style={{ color: '#9CA3AF', fontSize: '16px', marginLeft: '4px' }}>{unit}</Text>
+                <Text style={{ color: '#9CA3AF', fontSize: '14px', marginLeft: '4px' }}>{unit}</Text>
               </div>
-              <div className="mt-2">
-                <Text style={{ color: '#9CA3AF', fontSize: '12px' }}>
+              <div className="mt-1">
+                <Text style={{ color: '#9CA3AF', fontSize: '11px' }}>
                   {getHeartRateZone(maxValue).label}
                 </Text>
               </div>
             </div>
           </Card>
-        </div>
 
-        <Card
-          className="shadow-lg rounded-xl border-0"
-          style={{ backgroundColor: '#111827', border: '1px solid #374151' }}
-        >
-          <div className="mb-4">
-            <Text strong style={{ color: '#F7F7F7', fontSize: '18px' }}>
-              Heart Rate Zones
-            </Text>
-          </div>
-
-          <div className="space-y-3">
-            {[
-              { label: 'Resting Zone', range: '< 60 bpm', color: '#3B82F6', description: 'Relaxed state' },
-              { label: 'Healthy Zone', range: '60-100 bpm', color: '#10B981', description: 'Normal daily activity' },
-              { label: 'Active Zone', range: '100-140 bpm', color: '#F59E0B', description: 'Moderate exercise' },
-              { label: 'Intense Zone', range: '> 140 bpm', color: '#EF4444', description: 'Vigorous activity' }
-            ].map((zone, index) => (
-              <div key={index} className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: '#1F2937' }}>
-                <div className="flex items-center space-x-3">
-                  <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: zone.color }}
-                  />
-                  <div>
-                    <Text strong style={{ color: '#F7F7F7', fontSize: '14px' }}>
-                      {zone.label}
-                    </Text>
-                    <br />
-                    <Text style={{ color: '#9CA3AF', fontSize: '12px' }}>
-                      {zone.description}
+          <Card
+            className="shadow-lg rounded-xl border-0"
+            style={{ backgroundColor: '#111827', border: '1px solid #374151' }}
+          >
+            <div style={{ padding: '4px' }}>
+              <Text strong style={{ color: '#F7F7F7', fontSize: '12px', display: 'block', marginBottom: '8px' }}>
+                HR Zones
+              </Text>
+              <div className="space-y-1">
+                {[
+                  { label: 'Resting', range: '<60', color: '#3B82F6' },
+                  { label: 'Healthy', range: '60-100', color: '#10B981' },
+                  { label: 'Active', range: '100-140', color: '#F59E0B' },
+                  { label: 'Intense', range: '>140', color: '#EF4444' }
+                ].map((zone, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div
+                        className="w-2 h-2 rounded-full"
+                        style={{ backgroundColor: zone.color }}
+                      />
+                      <Text style={{ color: '#F7F7F7', fontSize: '11px' }}>
+                        {zone.label}
+                      </Text>
+                    </div>
+                    <Text style={{ color: zone.color, fontSize: '11px', fontWeight: 500 }}>
+                      {zone.range}
                     </Text>
                   </div>
-                </div>
-                <Text style={{ color: zone.color, fontSize: '14px', fontWeight: 500 }}>
-                  {zone.range}
-                </Text>
+                ))}
               </div>
-            ))}
-          </div>
-        </Card>
+            </div>
+          </Card>
+        </div>
 
         <Row gutter={[24, 24]}>
           <Col xs={24} lg={16}>
