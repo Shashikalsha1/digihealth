@@ -65,6 +65,7 @@ const YourTwinPage: React.FC = () => {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [timeRange, setTimeRange] = useState<'7days' | '1month'>('7days');
   const [bpType, setBpType] = useState<'sys' | 'dia'>('sys');
+  const [activeTabKey, setActiveTabKey] = useState<string>('heart_rate');
 
   useEffect(() => {
     fetchHealthData();
@@ -1462,7 +1463,8 @@ const YourTwinPage: React.FC = () => {
       </div>
 
       <Tabs
-        defaultActiveKey="heart_rate"
+        activeKey={activeTabKey}
+        onChange={(key) => setActiveTabKey(key)}
         type="card"
         items={[
             {
@@ -1490,15 +1492,20 @@ const YourTwinPage: React.FC = () => {
               ),
               children: (
                 <div className="space-y-6">
-                  <div className="flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                  <div
+                    className="flex items-center justify-center"
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <Radio.Group
                       value={bpType}
                       onChange={(e) => {
-                        e.stopPropagation();
                         setBpType(e.target.value);
                       }}
                       buttonStyle="solid"
                       size="large"
+                      onClick={(e) => e.stopPropagation()}
+                      onMouseDown={(e) => e.stopPropagation()}
                     >
                       <Radio.Button
                         value="sys"
@@ -1507,7 +1514,13 @@ const YourTwinPage: React.FC = () => {
                           borderColor: bpType === 'sys' ? '#F59E0B' : '#4B5563',
                           color: '#F7F7F7'
                         }}
-                        onClick={(e) => e.stopPropagation()}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                        }}
+                        onMouseDown={(e) => {
+                          e.stopPropagation();
+                        }}
                       >
                         Systolic
                       </Radio.Button>
@@ -1518,7 +1531,13 @@ const YourTwinPage: React.FC = () => {
                           borderColor: bpType === 'dia' ? '#10B981' : '#4B5563',
                           color: '#F7F7F7'
                         }}
-                        onClick={(e) => e.stopPropagation()}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                        }}
+                        onMouseDown={(e) => {
+                          e.stopPropagation();
+                        }}
                       >
                         Diastolic
                       </Radio.Button>
