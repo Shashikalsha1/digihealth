@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Typography, Row, Col, Statistic, Button, Alert, Spin, Tabs, Select } from 'antd';
+import { Card, Typography, Row, Col, Statistic, Button, Alert, Spin, Tabs, Select, Radio } from 'antd';
 import {
   Heart,
   Activity,
@@ -64,6 +64,7 @@ const YourTwinPage: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [timeRange, setTimeRange] = useState<'7days' | '1month'>('7days');
+  const [bpType, setBpType] = useState<'sys' | 'dia'>('sys');
 
   useEffect(() => {
     fetchHealthData();
@@ -1480,51 +1481,75 @@ const YourTwinPage: React.FC = () => {
               )
             },
             {
-              key: 'blood_pressure_sys',
+              key: 'blood_pressure',
               label: (
                 <span className="flex items-center space-x-2">
                   <TrendingUp className="w-4 h-4" />
-                  <span>Systolic BP</span>
+                  <span>Blood Pressure</span>
                 </span>
               ),
               children: (
-                <GenericChart
-                  data={getHistoricalData('blood_pressure_sys')}
-                  unit="mmHg"
-                  title="Systolic Blood Pressure"
-                  color="#F59E0B"
-                  zones={[
-                    { label: 'Low', range: '<90', color: '#3B82F6', min: 0, max: 90 },
-                    { label: 'Normal', range: '90-130', color: '#10B981', min: 90, max: 130 },
-                    { label: 'Elevated', range: '130-145', color: '#F59E0B', min: 130, max: 145 },
-                    { label: 'High', range: '>145', color: '#EF4444', min: 145, max: 200 }
-                  ]}
-                  showZoneDistribution={true}
-                />
-              )
-            },
-            {
-              key: 'blood_pressure_dia',
-              label: (
-                <span className="flex items-center space-x-2">
-                  <Activity className="w-4 h-4" />
-                  <span>Diastolic BP</span>
-                </span>
-              ),
-              children: (
-                <GenericChart
-                  data={getHistoricalData('blood_pressure_dia')}
-                  unit="mmHg"
-                  title="Diastolic Blood Pressure"
-                  color="#10B981"
-                  zones={[
-                    { label: 'Low', range: '<60', color: '#3B82F6', min: 0, max: 60 },
-                    { label: 'Normal', range: '60-85', color: '#10B981', min: 60, max: 85 },
-                    { label: 'Elevated', range: '85-95', color: '#F59E0B', min: 85, max: 95 },
-                    { label: 'High', range: '>95', color: '#EF4444', min: 95, max: 150 }
-                  ]}
-                  showZoneDistribution={true}
-                />
+                <div className="space-y-6">
+                  <div className="flex items-center justify-center">
+                    <Radio.Group
+                      value={bpType}
+                      onChange={(e) => setBpType(e.target.value)}
+                      buttonStyle="solid"
+                      size="large"
+                    >
+                      <Radio.Button
+                        value="sys"
+                        style={{
+                          backgroundColor: bpType === 'sys' ? '#F59E0B' : '#374151',
+                          borderColor: bpType === 'sys' ? '#F59E0B' : '#4B5563',
+                          color: '#F7F7F7'
+                        }}
+                      >
+                        Systolic
+                      </Radio.Button>
+                      <Radio.Button
+                        value="dia"
+                        style={{
+                          backgroundColor: bpType === 'dia' ? '#10B981' : '#374151',
+                          borderColor: bpType === 'dia' ? '#10B981' : '#4B5563',
+                          color: '#F7F7F7'
+                        }}
+                      >
+                        Diastolic
+                      </Radio.Button>
+                    </Radio.Group>
+                  </div>
+
+                  {bpType === 'sys' ? (
+                    <GenericChart
+                      data={getHistoricalData('blood_pressure_sys')}
+                      unit="mmHg"
+                      title="Systolic Blood Pressure"
+                      color="#F59E0B"
+                      zones={[
+                        { label: 'Low', range: '<90', color: '#3B82F6', min: 0, max: 90 },
+                        { label: 'Normal', range: '90-130', color: '#10B981', min: 90, max: 130 },
+                        { label: 'Elevated', range: '130-145', color: '#F59E0B', min: 130, max: 145 },
+                        { label: 'High', range: '>145', color: '#EF4444', min: 145, max: 200 }
+                      ]}
+                      showZoneDistribution={true}
+                    />
+                  ) : (
+                    <GenericChart
+                      data={getHistoricalData('blood_pressure_dia')}
+                      unit="mmHg"
+                      title="Diastolic Blood Pressure"
+                      color="#10B981"
+                      zones={[
+                        { label: 'Low', range: '<60', color: '#3B82F6', min: 0, max: 60 },
+                        { label: 'Normal', range: '60-85', color: '#10B981', min: 60, max: 85 },
+                        { label: 'Elevated', range: '85-95', color: '#F59E0B', min: 85, max: 95 },
+                        { label: 'High', range: '>95', color: '#EF4444', min: 95, max: 150 }
+                      ]}
+                      showZoneDistribution={true}
+                    />
+                  )}
+                </div>
               )
             },
             {
