@@ -159,7 +159,7 @@ const YourTwinPage: React.FC = () => {
         <Col xs={24} lg={12}>
           <Card
             className="shadow-lg rounded-xl border-0 h-full"
-            style={{ 
+            style={{
               backgroundColor: '#1F2937',
               border: '1px solid #374151',
               minHeight: '600px'
@@ -173,17 +173,24 @@ const YourTwinPage: React.FC = () => {
                 Your body's current state
               </Text>
             </div>
-            
-            {loading ? (
-              <div className="flex items-center justify-center h-96">
-                <Spin size="large" />
-              </div>
-            ) : (
-              <div className="flex items-center justify-center" style={{ height: '400px', overflow: 'hidden' }}>
-                <Simple3DModel />
-              </div>
-            )}
-            
+
+            <div className="relative flex items-center justify-center" style={{ height: '400px', overflow: 'hidden' }}>
+              <Simple3DModel />
+
+              {loading && (
+                <div
+                  className="absolute inset-0 flex items-center justify-center"
+                  style={{
+                    backgroundColor: 'rgba(31, 41, 55, 0.7)',
+                    backdropFilter: 'blur(4px)',
+                    zIndex: 10
+                  }}
+                >
+                  <Spin size="large" />
+                </div>
+              )}
+            </div>
+
             {lastUpdated && (
               <div className="text-center mt-4">
                 <div className="flex items-center justify-center space-x-2">
