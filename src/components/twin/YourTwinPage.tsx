@@ -171,6 +171,182 @@ const YourTwinPage: React.FC = () => {
     return data;
   };
 
+  const generateBloodPressureData = (days: number, type: 'sys' | 'dia') => {
+    const data = [];
+    const today = new Date();
+    const zones = type === 'sys'
+      ? [
+          { min: 90, max: 110, weight: 0.15 },
+          { min: 110, max: 130, weight: 0.5 },
+          { min: 130, max: 145, weight: 0.25 },
+          { min: 145, max: 165, weight: 0.1 }
+        ]
+      : [
+          { min: 60, max: 70, weight: 0.15 },
+          { min: 70, max: 85, weight: 0.5 },
+          { min: 85, max: 95, weight: 0.25 },
+          { min: 95, max: 105, weight: 0.1 }
+        ];
+
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const random = Math.random();
+      let cumulativeWeight = 0;
+      let selectedZone = zones[1];
+
+      for (const zone of zones) {
+        cumulativeWeight += zone.weight;
+        if (random <= cumulativeWeight) {
+          selectedZone = zone;
+          break;
+        }
+      }
+
+      const value = selectedZone.min + Math.random() * (selectedZone.max - selectedZone.min);
+      data.push({
+        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        value: Math.round(value)
+      });
+    }
+    return data;
+  };
+
+  const generateTemperatureData = (days: number) => {
+    const data = [];
+    const today = new Date();
+    const zones = [
+      { min: 36.0, max: 36.5, weight: 0.2 },
+      { min: 36.5, max: 37.2, weight: 0.6 },
+      { min: 37.2, max: 37.8, weight: 0.15 },
+      { min: 37.8, max: 38.5, weight: 0.05 }
+    ];
+
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const random = Math.random();
+      let cumulativeWeight = 0;
+      let selectedZone = zones[1];
+
+      for (const zone of zones) {
+        cumulativeWeight += zone.weight;
+        if (random <= cumulativeWeight) {
+          selectedZone = zone;
+          break;
+        }
+      }
+
+      const value = selectedZone.min + Math.random() * (selectedZone.max - selectedZone.min);
+      data.push({
+        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        value: parseFloat(value.toFixed(1))
+      });
+    }
+    return data;
+  };
+
+  const generateOxygenData = (days: number) => {
+    const data = [];
+    const today = new Date();
+    const zones = [
+      { min: 92, max: 95, weight: 0.1 },
+      { min: 95, max: 98, weight: 0.5 },
+      { min: 98, max: 100, weight: 0.4 }
+    ];
+
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const random = Math.random();
+      let cumulativeWeight = 0;
+      let selectedZone = zones[1];
+
+      for (const zone of zones) {
+        cumulativeWeight += zone.weight;
+        if (random <= cumulativeWeight) {
+          selectedZone = zone;
+          break;
+        }
+      }
+
+      const value = selectedZone.min + Math.random() * (selectedZone.max - selectedZone.min);
+      data.push({
+        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        value: Math.round(value)
+      });
+    }
+    return data;
+  };
+
+  const generateStepsData = (days: number) => {
+    const data = [];
+    const today = new Date();
+    const zones = [
+      { min: 2000, max: 5000, weight: 0.2 },
+      { min: 5000, max: 8000, weight: 0.4 },
+      { min: 8000, max: 12000, weight: 0.3 },
+      { min: 12000, max: 18000, weight: 0.1 }
+    ];
+
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const random = Math.random();
+      let cumulativeWeight = 0;
+      let selectedZone = zones[1];
+
+      for (const zone of zones) {
+        cumulativeWeight += zone.weight;
+        if (random <= cumulativeWeight) {
+          selectedZone = zone;
+          break;
+        }
+      }
+
+      const value = selectedZone.min + Math.random() * (selectedZone.max - selectedZone.min);
+      data.push({
+        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        value: Math.round(value)
+      });
+    }
+    return data;
+  };
+
+  const generateSleepData = (days: number) => {
+    const data = [];
+    const today = new Date();
+    const zones = [
+      { min: 4, max: 6, weight: 0.15 },
+      { min: 6, max: 8, weight: 0.5 },
+      { min: 8, max: 9, weight: 0.25 },
+      { min: 9, max: 11, weight: 0.1 }
+    ];
+
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const random = Math.random();
+      let cumulativeWeight = 0;
+      let selectedZone = zones[1];
+
+      for (const zone of zones) {
+        cumulativeWeight += zone.weight;
+        if (random <= cumulativeWeight) {
+          selectedZone = zone;
+          break;
+        }
+      }
+
+      const value = selectedZone.min + Math.random() * (selectedZone.max - selectedZone.min);
+      data.push({
+        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        value: parseFloat(value.toFixed(1))
+      });
+    }
+    return data;
+  };
+
   const getHistoricalData = (parameter: string) => {
     const days = timeRange === '7days' ? 7 : 30;
 
@@ -178,17 +354,17 @@ const YourTwinPage: React.FC = () => {
       case 'heart_rate':
         return generateHeartRateData(days);
       case 'blood_pressure_sys':
-        return generateMockData(days, 120, 20);
+        return generateBloodPressureData(days, 'sys');
       case 'blood_pressure_dia':
-        return generateMockData(days, 80, 10);
+        return generateBloodPressureData(days, 'dia');
       case 'temperature':
-        return generateMockData(days, 36.8, 1);
+        return generateTemperatureData(days);
       case 'oxygen_level':
-        return generateMockData(days, 98, 3);
+        return generateOxygenData(days);
       case 'steps':
-        return generateMockData(days, 7500, 3000);
+        return generateStepsData(days);
       case 'sleep_hours':
-        return generateMockData(days, 7.5, 2);
+        return generateSleepData(days);
       default:
         return [];
     }
@@ -594,74 +770,404 @@ const YourTwinPage: React.FC = () => {
     );
   };
 
-  const SimpleLineChart: React.FC<{ data: any[]; color: string; title: string; unit: string }> = ({
-    data,
-    color,
-    title,
-    unit
-  }) => {
+  interface GenericChartProps {
+    data: any[];
+    unit: string;
+    title: string;
+    color: string;
+    zones: Array<{ label: string; range: string; color: string; min: number; max: number }>;
+    showZoneDistribution?: boolean;
+  }
+
+  const GenericChart: React.FC<GenericChartProps> = ({ data, unit, title, color, zones, showZoneDistribution = true }) => {
+    const [chartType, setChartType] = React.useState<'line' | 'bar'>('line');
     const maxValue = Math.max(...data.map(d => d.value));
     const minValue = Math.min(...data.map(d => d.value));
-    const range = maxValue - minValue;
-    const padding = range * 0.1;
+    const avgValue = data.reduce((sum, d) => sum + d.value, 0) / data.length;
 
-    const points = data.map((point, index) => {
-      const x = (index / (data.length - 1)) * 100;
-      const y = 100 - (((point.value - minValue + padding) / (range + padding * 2)) * 100);
-      return `${x},${y}`;
-    }).join(' ');
+    const getZoneForValue = (value: number) => {
+      for (const zone of zones) {
+        if (value >= zone.min && value < zone.max) {
+          return zone;
+        }
+      }
+      return zones[zones.length - 1];
+    };
+
+    const zoneDistribution = data.reduce((acc, point) => {
+      const zone = getZoneForValue(point.value);
+      acc[zone.label] = (acc[zone.label] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const lineChartData = {
+      labels: data.map(d => d.date),
+      datasets: [
+        {
+          label: title,
+          data: data.map(d => d.value),
+          borderColor: color,
+          backgroundColor: (context: any) => {
+            const ctx = context.chart.ctx;
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, color + '66');
+            gradient.addColorStop(1, color + '00');
+            return gradient;
+          },
+          borderWidth: 3,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          pointBackgroundColor: data.map(d => getZoneForValue(d.value).color),
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          pointHoverBackgroundColor: data.map(d => getZoneForValue(d.value).color),
+          pointHoverBorderColor: '#fff',
+          pointHoverBorderWidth: 3,
+        }
+      ]
+    };
+
+    const lineChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          backgroundColor: '#1F2937',
+          titleColor: '#F7F7F7',
+          bodyColor: '#F7F7F7',
+          borderColor: '#374151',
+          borderWidth: 1,
+          padding: 12,
+          displayColors: false,
+          callbacks: {
+            label: function(context: any) {
+              const value = context.parsed.y;
+              const zone = getZoneForValue(value);
+              return [
+                `${title}: ${value} ${unit}`,
+                `Zone: ${zone.label}`
+              ];
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: {
+            color: '#374151',
+            drawBorder: false
+          },
+          ticks: {
+            color: '#9CA3AF',
+            font: {
+              size: 11
+            }
+          }
+        },
+        y: {
+          grid: {
+            color: '#374151',
+            drawBorder: false
+          },
+          ticks: {
+            color: '#9CA3AF',
+            font: {
+              size: 11
+            },
+            callback: function(value: any) {
+              return value + ' ' + unit;
+            }
+          },
+          beginAtZero: false
+        }
+      }
+    };
+
+    const barChartData = {
+      labels: data.map(d => d.date),
+      datasets: [
+        {
+          label: title,
+          data: data.map(d => d.value),
+          backgroundColor: data.map(d => {
+            const zone = getZoneForValue(d.value);
+            return zone.color + '99';
+          }),
+          borderColor: data.map(d => getZoneForValue(d.value).color),
+          borderWidth: 2,
+          borderRadius: 6,
+          borderSkipped: false,
+        }
+      ]
+    };
+
+    const barChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          backgroundColor: '#1F2937',
+          titleColor: '#F7F7F7',
+          bodyColor: '#F7F7F7',
+          borderColor: '#374151',
+          borderWidth: 1,
+          padding: 12,
+          displayColors: true,
+          callbacks: {
+            label: function(context: any) {
+              const value = context.parsed.y;
+              const zone = getZoneForValue(value);
+              return `${value} ${unit} (${zone.label})`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: {
+            display: false
+          },
+          ticks: {
+            color: '#9CA3AF',
+            font: {
+              size: 11
+            }
+          }
+        },
+        y: {
+          grid: {
+            color: '#374151',
+            drawBorder: false
+          },
+          ticks: {
+            color: '#9CA3AF',
+            font: {
+              size: 11
+            },
+            callback: function(value: any) {
+              return value + ' ' + unit;
+            }
+          },
+          beginAtZero: false
+        }
+      }
+    };
+
+    const doughnutChartData = {
+      labels: zones.map(z => z.label),
+      datasets: [
+        {
+          data: zones.map(z => zoneDistribution[z.label] || 0),
+          backgroundColor: zones.map(z => z.color),
+          borderColor: '#1F2937',
+          borderWidth: 3,
+        }
+      ]
+    };
+
+    const doughnutChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom' as const,
+          labels: {
+            color: '#F7F7F7',
+            padding: 15,
+            font: {
+              size: 12
+            },
+            usePointStyle: true,
+            pointStyle: 'circle'
+          }
+        },
+        tooltip: {
+          backgroundColor: '#1F2937',
+          titleColor: '#F7F7F7',
+          bodyColor: '#F7F7F7',
+          borderColor: '#374151',
+          borderWidth: 1,
+          padding: 12,
+          callbacks: {
+            label: function(context: any) {
+              const total = data.length;
+              const value = context.parsed;
+              const percentage = ((value / total) * 100).toFixed(1);
+              return `${context.label}: ${value} days (${percentage}%)`;
+            }
+          }
+        }
+      },
+      cutout: '70%'
+    };
+
+    const formatValue = (val: number) => {
+      if (Number.isInteger(val)) return val.toFixed(0);
+      return val.toFixed(1);
+    };
 
     return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <Text strong style={{ color: '#F7F7F7', fontSize: '16px' }}>
-            {title}
-          </Text>
-          <Text style={{ color: '#9CA3AF', fontSize: '14px' }}>
-            Average: {(data.reduce((sum, d) => sum + d.value, 0) / data.length).toFixed(1)} {unit}
-          </Text>
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+          <Card
+            className="shadow-lg rounded-xl border-0"
+            style={{ backgroundColor: '#111827', border: '1px solid #374151' }}
+          >
+            <div className="text-center">
+              <Text style={{ color: '#9CA3AF', fontSize: '13px' }}>Average</Text>
+              <div className="mt-2">
+                <Text strong style={{ color: color, fontSize: '28px' }}>
+                  {formatValue(avgValue)}
+                </Text>
+                <Text style={{ color: '#9CA3AF', fontSize: '14px', marginLeft: '4px' }}>{unit}</Text>
+              </div>
+              <div className="mt-1">
+                <Heart className="w-5 h-5 mx-auto" style={{ color: color }} />
+              </div>
+            </div>
+          </Card>
+
+          <Card
+            className="shadow-lg rounded-xl border-0"
+            style={{ backgroundColor: '#111827', border: '1px solid #374151' }}
+          >
+            <div className="text-center">
+              <Text style={{ color: '#9CA3AF', fontSize: '13px' }}>Minimum</Text>
+              <div className="mt-2">
+                <Text strong style={{ color: getZoneForValue(minValue).color, fontSize: '28px' }}>
+                  {formatValue(minValue)}
+                </Text>
+                <Text style={{ color: '#9CA3AF', fontSize: '14px', marginLeft: '4px' }}>{unit}</Text>
+              </div>
+              <div className="mt-1">
+                <Text style={{ color: '#9CA3AF', fontSize: '11px' }}>
+                  {getZoneForValue(minValue).label}
+                </Text>
+              </div>
+            </div>
+          </Card>
+
+          <Card
+            className="shadow-lg rounded-xl border-0"
+            style={{ backgroundColor: '#111827', border: '1px solid #374151' }}
+          >
+            <div className="text-center">
+              <Text style={{ color: '#9CA3AF', fontSize: '13px' }}>Maximum</Text>
+              <div className="mt-2">
+                <Text strong style={{ color: getZoneForValue(maxValue).color, fontSize: '28px' }}>
+                  {formatValue(maxValue)}
+                </Text>
+                <Text style={{ color: '#9CA3AF', fontSize: '14px', marginLeft: '4px' }}>{unit}</Text>
+              </div>
+              <div className="mt-1">
+                <Text style={{ color: '#9CA3AF', fontSize: '11px' }}>
+                  {getZoneForValue(maxValue).label}
+                </Text>
+              </div>
+            </div>
+          </Card>
+
+          <Card
+            className="shadow-lg rounded-xl border-0"
+            style={{ backgroundColor: '#111827', border: '1px solid #374151' }}
+          >
+            <div style={{ padding: '4px' }}>
+              <Text strong style={{ color: '#F7F7F7', fontSize: '12px', display: 'block', marginBottom: '8px' }}>
+                Zones
+              </Text>
+              <div className="space-y-1">
+                {zones.map((zone, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div
+                        className="w-2 h-2 rounded-full"
+                        style={{ backgroundColor: zone.color }}
+                      />
+                      <Text style={{ color: '#F7F7F7', fontSize: '11px' }}>
+                        {zone.label}
+                      </Text>
+                    </div>
+                    <Text style={{ color: zone.color, fontSize: '11px', fontWeight: 500 }}>
+                      {zone.range}
+                    </Text>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Card>
         </div>
 
-        <div className="relative" style={{ width: '100%', height: '250px', backgroundColor: '#111827', borderRadius: '8px', padding: '20px' }}>
-          <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <polyline
-              points={points}
-              fill="none"
-              stroke={color}
-              strokeWidth="0.5"
-              vectorEffect="non-scaling-stroke"
-            />
-            {data.map((point, index) => {
-              const x = (index / (data.length - 1)) * 100;
-              const y = 100 - (((point.value - minValue + padding) / (range + padding * 2)) * 100);
-              return (
-                <circle
-                  key={index}
-                  cx={x}
-                  cy={y}
-                  r="1"
-                  fill={color}
-                  vectorEffect="non-scaling-stroke"
-                />
-              );
-            })}
-          </svg>
-        </div>
-
-        <div className="flex justify-between" style={{ paddingLeft: '20px', paddingRight: '20px' }}>
-          {data.map((point, index) => {
-            if (timeRange === '7days' || index % 3 === 0 || index === data.length - 1) {
-              return (
-                <div key={index} className="text-center">
-                  <Text style={{ color: '#9CA3AF', fontSize: '11px' }}>{point.date}</Text>
-                  <br />
-                  <Text style={{ color: color, fontSize: '12px', fontWeight: 500 }}>{point.value} {unit}</Text>
+        <Row gutter={[24, 24]}>
+          <Col xs={24} lg={showZoneDistribution ? 16 : 24}>
+            <Card
+              className="shadow-lg rounded-xl border-0"
+              style={{ backgroundColor: '#111827', border: '1px solid #374151' }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <Text strong style={{ color: '#F7F7F7', fontSize: '18px' }}>
+                  {title} Trend
+                </Text>
+                <div className="flex items-center space-x-2">
+                  <Button
+                    type={chartType === 'line' ? 'primary' : 'default'}
+                    onClick={() => setChartType('line')}
+                    style={{
+                      backgroundColor: chartType === 'line' ? '#00B58E' : '#374151',
+                      borderColor: chartType === 'line' ? '#00B58E' : '#4B5563',
+                      color: '#F7F7F7'
+                    }}
+                  >
+                    Line Chart
+                  </Button>
+                  <Button
+                    type={chartType === 'bar' ? 'primary' : 'default'}
+                    onClick={() => setChartType('bar')}
+                    style={{
+                      backgroundColor: chartType === 'bar' ? '#00B58E' : '#374151',
+                      borderColor: chartType === 'bar' ? '#00B58E' : '#4B5563',
+                      color: '#F7F7F7'
+                    }}
+                  >
+                    Bar Chart
+                  </Button>
                 </div>
-              );
-            }
-            return null;
-          })}
-        </div>
+              </div>
+              <div style={{ height: '350px', padding: '10px' }}>
+                {chartType === 'line' ? (
+                  <Line data={lineChartData} options={lineChartOptions} />
+                ) : (
+                  <Bar data={barChartData} options={barChartOptions} />
+                )}
+              </div>
+            </Card>
+          </Col>
+
+          {showZoneDistribution && (
+            <Col xs={24} lg={8}>
+              <Card
+                className="shadow-lg rounded-xl border-0"
+                style={{ backgroundColor: '#111827', border: '1px solid #374151', height: '100%' }}
+              >
+                <div className="mb-4">
+                  <Text strong style={{ color: '#F7F7F7', fontSize: '18px' }}>
+                    Zone Distribution
+                  </Text>
+                </div>
+                <div style={{ height: '300px', padding: '10px' }}>
+                  <Doughnut data={doughnutChartData} options={doughnutChartOptions} />
+                </div>
+              </Card>
+            </Col>
+          )}
+        </Row>
       </div>
     );
   };
@@ -974,28 +1480,51 @@ const YourTwinPage: React.FC = () => {
               )
             },
             {
-              key: 'blood_pressure',
+              key: 'blood_pressure_sys',
               label: (
                 <span className="flex items-center space-x-2">
                   <TrendingUp className="w-4 h-4" />
-                  <span>Blood Pressure</span>
+                  <span>Systolic BP</span>
                 </span>
               ),
               children: (
-                <div className="space-y-8">
-                  <SimpleLineChart
-                    data={getHistoricalData('blood_pressure_sys')}
-                    color="#F59E0B"
-                    title="Systolic Blood Pressure"
-                    unit="mmHg"
-                  />
-                  <SimpleLineChart
-                    data={getHistoricalData('blood_pressure_dia')}
-                    color="#10B981"
-                    title="Diastolic Blood Pressure"
-                    unit="mmHg"
-                  />
-                </div>
+                <GenericChart
+                  data={getHistoricalData('blood_pressure_sys')}
+                  unit="mmHg"
+                  title="Systolic Blood Pressure"
+                  color="#F59E0B"
+                  zones={[
+                    { label: 'Low', range: '<90', color: '#3B82F6', min: 0, max: 90 },
+                    { label: 'Normal', range: '90-130', color: '#10B981', min: 90, max: 130 },
+                    { label: 'Elevated', range: '130-145', color: '#F59E0B', min: 130, max: 145 },
+                    { label: 'High', range: '>145', color: '#EF4444', min: 145, max: 200 }
+                  ]}
+                  showZoneDistribution={true}
+                />
+              )
+            },
+            {
+              key: 'blood_pressure_dia',
+              label: (
+                <span className="flex items-center space-x-2">
+                  <Activity className="w-4 h-4" />
+                  <span>Diastolic BP</span>
+                </span>
+              ),
+              children: (
+                <GenericChart
+                  data={getHistoricalData('blood_pressure_dia')}
+                  unit="mmHg"
+                  title="Diastolic Blood Pressure"
+                  color="#10B981"
+                  zones={[
+                    { label: 'Low', range: '<60', color: '#3B82F6', min: 0, max: 60 },
+                    { label: 'Normal', range: '60-85', color: '#10B981', min: 60, max: 85 },
+                    { label: 'Elevated', range: '85-95', color: '#F59E0B', min: 85, max: 95 },
+                    { label: 'High', range: '>95', color: '#EF4444', min: 95, max: 150 }
+                  ]}
+                  showZoneDistribution={true}
+                />
               )
             },
             {
@@ -1007,11 +1536,18 @@ const YourTwinPage: React.FC = () => {
                 </span>
               ),
               children: (
-                <SimpleLineChart
+                <GenericChart
                   data={getHistoricalData('temperature')}
-                  color="#EF4444"
-                  title="Body Temperature Trend"
                   unit="°C"
+                  title="Body Temperature"
+                  color="#EF4444"
+                  zones={[
+                    { label: 'Low', range: '<36.5', color: '#3B82F6', min: 35, max: 36.5 },
+                    { label: 'Normal', range: '36.5-37.2', color: '#10B981', min: 36.5, max: 37.2 },
+                    { label: 'Elevated', range: '37.2-37.8', color: '#F59E0B', min: 37.2, max: 37.8 },
+                    { label: 'Fever', range: '>37.8', color: '#EF4444', min: 37.8, max: 40 }
+                  ]}
+                  showZoneDistribution={true}
                 />
               )
             },
@@ -1024,11 +1560,17 @@ const YourTwinPage: React.FC = () => {
                 </span>
               ),
               children: (
-                <SimpleLineChart
+                <GenericChart
                   data={getHistoricalData('oxygen_level')}
-                  color="#10B981"
-                  title="Blood Oxygen Level Trend"
                   unit="%"
+                  title="Blood Oxygen Level"
+                  color="#10B981"
+                  zones={[
+                    { label: 'Low', range: '<95', color: '#EF4444', min: 90, max: 95 },
+                    { label: 'Normal', range: '95-98', color: '#10B981', min: 95, max: 98 },
+                    { label: 'Optimal', range: '98-100', color: '#00B58E', min: 98, max: 101 }
+                  ]}
+                  showZoneDistribution={true}
                 />
               )
             },
@@ -1041,11 +1583,18 @@ const YourTwinPage: React.FC = () => {
                 </span>
               ),
               children: (
-                <SimpleLineChart
+                <GenericChart
                   data={getHistoricalData('steps')}
-                  color="#1D459A"
-                  title="Daily Steps Trend"
                   unit="steps"
+                  title="Daily Steps"
+                  color="#1D459A"
+                  zones={[
+                    { label: 'Sedentary', range: '<5000', color: '#EF4444', min: 0, max: 5000 },
+                    { label: 'Low Active', range: '5000-8000', color: '#F59E0B', min: 5000, max: 8000 },
+                    { label: 'Active', range: '8000-12000', color: '#10B981', min: 8000, max: 12000 },
+                    { label: 'Highly Active', range: '>12000', color: '#00B58E', min: 12000, max: 25000 }
+                  ]}
+                  showZoneDistribution={true}
                 />
               )
             },
@@ -1058,11 +1607,18 @@ const YourTwinPage: React.FC = () => {
                 </span>
               ),
               children: (
-                <SimpleLineChart
+                <GenericChart
                   data={getHistoricalData('sleep_hours')}
-                  color="#8B5CF6"
-                  title="Sleep Duration Trend"
                   unit="hours"
+                  title="Sleep Duration"
+                  color="#8B5CF6"
+                  zones={[
+                    { label: 'Insufficient', range: '<6', color: '#EF4444', min: 0, max: 6 },
+                    { label: 'Adequate', range: '6-8', color: '#10B981', min: 6, max: 8 },
+                    { label: 'Optimal', range: '8-9', color: '#00B58E', min: 8, max: 9 },
+                    { label: 'Excessive', range: '>9', color: '#F59E0B', min: 9, max: 12 }
+                  ]}
+                  showZoneDistribution={true}
                 />
               )
             }
