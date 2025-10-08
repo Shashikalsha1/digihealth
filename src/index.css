@@ -391,3 +391,35 @@ a:hover {
 .ant-select-arrow {
   color: #9CA3AF !important;
 }
+
+.main-twin-tabs .ant-tabs-nav {
+  background-color: #1F2937 !important;
+  padding: 16px 24px 0 24px !important;
+  border-radius: 12px 12px 0 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.main-twin-tabs .ant-tabs-tab {
+  color: #9CA3AF !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  padding: 12px 24px !important;
+}
+
+.main-twin-tabs .ant-tabs-tab:hover {
+  color: #F7F7F7 !important;
+}
+
+.main-twin-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #00B58E !important;
+}
+
+.main-twin-tabs .ant-tabs-ink-bar {
+  background: #00B58E !important;
+  height: 3px !important;
+}
+
+.main-twin-tabs .ant-tabs-content-holder {
+  background-color: transparent !important;
+  padding: 0 !important;
+}

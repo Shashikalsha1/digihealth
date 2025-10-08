@@ -218,55 +218,8 @@ const YourTwinPage: React.FC = () => {
     );
   };
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div
-            className="w-12 h-12 rounded-full flex items-center justify-center"
-            style={{ backgroundColor: '#00B58E' }}
-          >
-            <User className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <Title level={2} style={{ color: '#F7F7F7', marginBottom: 4 }}>
-              Your Digital Twin
-            </Title>
-            <Text style={{ color: '#9CA3AF' }}>
-              Real-time health monitoring and visualization
-            </Text>
-          </div>
-        </div>
-        
-        <Button
-          type="primary"
-          icon={<RefreshCw className="w-4 h-4" />}
-          onClick={fetchHealthData}
-          loading={loading}
-          style={{
-            backgroundColor: '#00B58E',
-            borderColor: '#00B58E',
-            height: '44px',
-          }}
-        >
-          Sync Data
-        </Button>
-      </div>
-
-      {/* Error Alert */}
-      {error && (
-        <Alert
-          message="Error"
-          description={error}
-          type="error"
-          showIcon
-          className="rounded-lg"
-        />
-      )}
-
-      {/* Main Content */}
-      <Row gutter={24} style={{ minHeight: '600px' }}>
+  const LiveView = () => (
+    <Row gutter={24} style={{ minHeight: '600px' }}>
         {/* Left Side - 3D Model */}
         <Col xs={24} lg={12}>
           <Card
@@ -513,34 +466,35 @@ const YourTwinPage: React.FC = () => {
           </div>
         </Col>
       </Row>
+  );
 
-      {/* Historical Data Tabs */}
-      <Card
-        className="shadow-lg rounded-xl border-0"
-        style={{
-          backgroundColor: '#1F2937',
-          border: '1px solid #374151'
-        }}
-      >
-        <div className="flex items-center justify-between mb-6">
-          <Title level={3} style={{ color: '#F7F7F7', marginBottom: 0 }}>
-            Historical Data
-          </Title>
-          <Select
-            value={timeRange}
-            onChange={(value) => setTimeRange(value)}
-            style={{ width: 150 }}
-            options={[
-              { value: '7days', label: 'Last 7 Days' },
-              { value: '1month', label: 'Last 30 Days' }
-            ]}
-          />
-        </div>
+  const HistoryView = () => (
+    <Card
+      className="shadow-lg rounded-xl border-0"
+      style={{
+        backgroundColor: '#1F2937',
+        border: '1px solid #374151'
+      }}
+    >
+      <div className="flex items-center justify-between mb-6">
+        <Title level={3} style={{ color: '#F7F7F7', marginBottom: 0 }}>
+          Historical Data
+        </Title>
+        <Select
+          value={timeRange}
+          onChange={(value) => setTimeRange(value)}
+          style={{ width: 150 }}
+          options={[
+            { value: '7days', label: 'Last 7 Days' },
+            { value: '1month', label: 'Last 30 Days' }
+          ]}
+        />
+      </div>
 
-        <Tabs
-          defaultActiveKey="heart_rate"
-          type="card"
-          items={[
+      <Tabs
+        defaultActiveKey="heart_rate"
+        type="card"
+        items={[
             {
               key: 'heart_rate',
               label: (
@@ -651,10 +605,88 @@ const YourTwinPage: React.FC = () => {
                 />
               )
             }
-          ]}
-          className="custom-tabs"
+        ]}
+        className="custom-tabs"
+      />
+    </Card>
+  );
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <div
+            className="w-12 h-12 rounded-full flex items-center justify-center"
+            style={{ backgroundColor: '#00B58E' }}
+          >
+            <User className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <Title level={2} style={{ color: '#F7F7F7', marginBottom: 4 }}>
+              Your Digital Twin
+            </Title>
+            <Text style={{ color: '#9CA3AF' }}>
+              Real-time health monitoring and visualization
+            </Text>
+          </div>
+        </div>
+
+        <Button
+          type="primary"
+          icon={<RefreshCw className="w-4 h-4" />}
+          onClick={fetchHealthData}
+          loading={loading}
+          style={{
+            backgroundColor: '#00B58E',
+            borderColor: '#00B58E',
+            height: '44px',
+          }}
+        >
+          Sync Data
+        </Button>
+      </div>
+
+      {/* Error Alert */}
+      {error && (
+        <Alert
+          message="Error"
+          description={error}
+          type="error"
+          showIcon
+          className="rounded-lg"
         />
-      </Card>
+      )}
+
+      {/* Main Tabs - Live and History */}
+      <Tabs
+        defaultActiveKey="live"
+        type="line"
+        size="large"
+        items={[
+          {
+            key: 'live',
+            label: (
+              <span className="flex items-center space-x-2">
+                <Activity className="w-5 h-5" />
+                <span style={{ fontSize: '16px' }}>Live</span>
+              </span>
+            ),
+            children: <LiveView />
+          },
+          {
+            key: 'history',
+            label: (
+              <span className="flex items-center space-x-2">
+                <Clock className="w-5 h-5" />
+                <span style={{ fontSize: '16px' }}>History</span>
+              </span>
+            ),
+            children: <HistoryView />
+          }
+        ]}
+        className="main-twin-tabs"
+      />
     </div>
   );
 };
