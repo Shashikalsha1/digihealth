@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Typography, Row, Col, Statistic, Button, Alert, Spin, Tabs, Select, Radio } from 'antd';
+import { Card, Typography, Row, Col, Statistic, Button, Alert, Spin, Tabs, Select, Radio, Modal, Table } from 'antd';
 import {
   Heart,
   Activity,
@@ -66,6 +66,8 @@ const YourTwinPage: React.FC = () => {
   const [timeRange, setTimeRange] = useState<'7days' | '1month'>('7days');
   const [bpType, setBpType] = useState<'sys' | 'dia'>('sys');
   const [activeTabKey, setActiveTabKey] = useState<string>('heart_rate');
+  const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [selectedDayData, setSelectedDayData] = useState<any>(null);
 
   useEffect(() => {
     fetchHealthData();
@@ -163,11 +165,43 @@ const YourTwinPage: React.FC = () => {
         }
       }
 
-      const value = selectedZone.min + Math.random() * (selectedZone.max - selectedZone.min);
+      const detailedReadings = [];
+      const readingsCount = Math.floor(Math.random() * 6) + 5;
+
+      for (let j = 0; j < readingsCount; j++) {
+        const hour = Math.floor(Math.random() * 24);
+        const minute = Math.floor(Math.random() * 60);
+        const timestamp = new Date(date);
+        timestamp.setHours(hour, minute, 0, 0);
+
+        const random = Math.random();
+        let cumulativeWeight = 0;
+        let selectedZone = zones[1];
+
+        for (const zone of zones) {
+          cumulativeWeight += zone.weight;
+          if (random <= cumulativeWeight) {
+            selectedZone = zone;
+            break;
+          }
+        }
+
+        const value = selectedZone.min + Math.random() * (selectedZone.max - selectedZone.min);
+        detailedReadings.push({
+          time: timestamp.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+          value: Math.round(value),
+          timestamp: timestamp
+        });
+      }
+
+      detailedReadings.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+      const avgValue = Math.round(detailedReadings.reduce((sum, r) => sum + r.value, 0) / detailedReadings.length);
 
       data.push({
         date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        value: Math.round(value)
+        value: avgValue,
+        fullDate: date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }),
+        detailedReadings: detailedReadings
       });
     }
     return data;
@@ -423,6 +457,17 @@ const YourTwinPage: React.FC = () => {
     const lineChartOptions = {
       responsive: true,
       maintainAspectRatio: false,
+      onClick: (event: any, elements: any) => {
+        if (elements && elements.length > 0) {
+          const dataIndex = elements[0].index;
+          setSelectedDayData({
+            ...data[dataIndex],
+            metricName: 'Heart Rate',
+            unit: unit
+          });
+          setDetailModalVisible(true);
+        }
+      },
       plugins: {
         legend: {
           display: false
@@ -442,7 +487,8 @@ const YourTwinPage: React.FC = () => {
               return [
                 `Heart Rate: ${value} ${unit}`,
                 `Zone: ${zone.label}`,
-                `Status: ${zone.zone}`
+                `Status: ${zone.zone}`,
+                'Click to view detailed readings'
               ];
             }
           }
@@ -501,6 +547,17 @@ const YourTwinPage: React.FC = () => {
     const barChartOptions = {
       responsive: true,
       maintainAspectRatio: false,
+      onClick: (event: any, elements: any) => {
+        if (elements && elements.length > 0) {
+          const dataIndex = elements[0].index;
+          setSelectedDayData({
+            ...data[dataIndex],
+            metricName: 'Heart Rate',
+            unit: unit
+          });
+          setDetailModalVisible(true);
+        }
+      },
       plugins: {
         legend: {
           display: false
@@ -517,7 +574,10 @@ const YourTwinPage: React.FC = () => {
             label: function(context: any) {
               const value = context.parsed.y;
               const zone = getHeartRateZone(value);
-              return `${value} ${unit} (${zone.label})`;
+              return [
+                `${value} ${unit} (${zone.label})`,
+                'Click to view detailed readings'
+              ];
             }
           }
         }
@@ -1763,6 +1823,168 @@ const YourTwinPage: React.FC = () => {
         ]}
         className="main-twin-tabs"
       />
+
+      <Modal
+        title={
+          <div style={{ color: '#F7F7F7' }}>
+            <div style={{ fontSize: '18px', fontWeight: 600 }}>
+              {selectedDayData?.metricName} - Detailed Readings
+            </div>
+            <div style={{ fontSize: '14px', fontWeight: 400, color: '#9CA3AF', marginTop: '4px' }}>
+              {selectedDayData?.fullDate}
+            </div>
+          </div>
+        }
+        open={detailModalVisible}
+        onCancel={() => setDetailModalVisible(false)}
+        footer={[
+          <Button
+            key="close"
+            onClick={() => setDetailModalVisible(false)}
+            style={{
+              backgroundColor: '#00B58E',
+              borderColor: '#00B58E',
+              color: '#FFFFFF'
+            }}
+          >
+            Close
+          </Button>
+        ]}
+        width={700}
+        styles={{
+          body: {
+            backgroundColor: '#111827',
+            maxHeight: '60vh',
+            overflowY: 'auto'
+          },
+          header: {
+            backgroundColor: '#1F2937',
+            borderBottom: '1px solid #374151'
+          },
+          footer: {
+            backgroundColor: '#1F2937',
+            borderTop: '1px solid #374151'
+          },
+          content: {
+            backgroundColor: '#111827'
+          }
+        }}
+      >
+        {selectedDayData?.detailedReadings && (
+          <div>
+            <div style={{
+              marginBottom: '16px',
+              padding: '12px',
+              backgroundColor: '#1F2937',
+              borderRadius: '8px',
+              display: 'flex',
+              justifyContent: 'space-around'
+            }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ color: '#9CA3AF', fontSize: '12px' }}>Total Readings</div>
+                <div style={{ color: '#F7F7F7', fontSize: '20px', fontWeight: 600 }}>
+                  {selectedDayData.detailedReadings.length}
+                </div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ color: '#9CA3AF', fontSize: '12px' }}>Average</div>
+                <div style={{ color: '#F7F7F7', fontSize: '20px', fontWeight: 600 }}>
+                  {selectedDayData.value} {selectedDayData.unit}
+                </div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ color: '#9CA3AF', fontSize: '12px' }}>Min</div>
+                <div style={{ color: '#F7F7F7', fontSize: '20px', fontWeight: 600 }}>
+                  {Math.min(...selectedDayData.detailedReadings.map((r: any) => r.value))} {selectedDayData.unit}
+                </div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ color: '#9CA3AF', fontSize: '12px' }}>Max</div>
+                <div style={{ color: '#F7F7F7', fontSize: '20px', fontWeight: 600 }}>
+                  {Math.max(...selectedDayData.detailedReadings.map((r: any) => r.value))} {selectedDayData.unit}
+                </div>
+              </div>
+            </div>
+
+            <Table
+              dataSource={selectedDayData.detailedReadings.map((reading: any, index: number) => ({
+                key: index,
+                time: reading.time,
+                value: reading.value
+              }))}
+              columns={[
+                {
+                  title: 'Time',
+                  dataIndex: 'time',
+                  key: 'time',
+                  width: '40%',
+                  render: (text: string) => (
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      color: '#F7F7F7',
+                      fontSize: '14px'
+                    }}>
+                      <Clock className="w-4 h-4 mr-2" style={{ color: '#9CA3AF' }} />
+                      {text}
+                    </div>
+                  )
+                },
+                {
+                  title: selectedDayData.metricName,
+                  dataIndex: 'value',
+                  key: 'value',
+                  width: '30%',
+                  render: (value: number) => (
+                    <div style={{
+                      color: '#F7F7F7',
+                      fontSize: '16px',
+                      fontWeight: 500
+                    }}>
+                      {value} {selectedDayData.unit}
+                    </div>
+                  )
+                },
+                {
+                  title: 'Status',
+                  key: 'status',
+                  width: '30%',
+                  render: (_: any, record: any) => {
+                    const value = record.value;
+                    let status = { text: 'Normal', color: '#10B981' };
+
+                    if (selectedDayData.metricName === 'Heart Rate') {
+                      if (value < 60) status = { text: 'Low', color: '#3B82F6' };
+                      else if (value >= 60 && value < 100) status = { text: 'Normal', color: '#10B981' };
+                      else if (value >= 100 && value < 140) status = { text: 'Elevated', color: '#F59E0B' };
+                      else status = { text: 'High', color: '#EF4444' };
+                    }
+
+                    return (
+                      <div style={{
+                        padding: '4px 12px',
+                        borderRadius: '12px',
+                        backgroundColor: status.color + '20',
+                        color: status.color,
+                        fontSize: '12px',
+                        fontWeight: 600,
+                        display: 'inline-block'
+                      }}>
+                        {status.text}
+                      </div>
+                    );
+                  }
+                }
+              ]}
+              pagination={false}
+              style={{
+                backgroundColor: '#1F2937'
+              }}
+              className="detailed-readings-table"
+            />
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

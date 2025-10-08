@@ -423,3 +423,30 @@ a:hover {
   background-color: transparent !important;
   padding: 0 !important;
 }
+
+.detailed-readings-table .ant-table {
+  background-color: #1F2937 !important;
+}
+
+.detailed-readings-table .ant-table-thead > tr > th {
+  background-color: #374151 !important;
+  border-bottom: 1px solid #4B5563 !important;
+  color: #F7F7F7 !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+}
+
+.detailed-readings-table .ant-table-tbody > tr > td {
+  background-color: #1F2937 !important;
+  border-bottom: 1px solid #374151 !important;
+  color: #F7F7F7 !important;
+  padding: 12px 16px !important;
+}
+
+.detailed-readings-table .ant-table-tbody > tr:hover > td {
+  background-color: #374151 !important;
+}
+
+.ant-modal-mask {
+  background-color: rgba(0, 0, 0, 0.65) !important;
+}
