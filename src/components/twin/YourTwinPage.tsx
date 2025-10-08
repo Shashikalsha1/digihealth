@@ -13,7 +13,34 @@ import {
   TrendingUp,
   Clock
 } from 'lucide-react';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title as ChartTitle,
+  Tooltip,
+  Legend,
+  Filler,
+  ArcElement
+} from 'chart.js';
+import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import apiService from '../../services/apiService';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ChartTitle,
+  Tooltip,
+  Legend,
+  Filler,
+  ArcElement
+);
 
 const { Title, Text } = Typography;
 
@@ -135,20 +162,238 @@ const YourTwinPage: React.FC = () => {
     const maxValue = Math.max(...data.map(d => d.value));
     const minValue = Math.min(...data.map(d => d.value));
     const avgValue = data.reduce((sum, d) => sum + d.value, 0) / data.length;
-    const range = maxValue - minValue;
-    const padding = range * 0.1;
-
-    const points = data.map((point, index) => {
-      const x = (index / (data.length - 1)) * 100;
-      const y = 100 - (((point.value - minValue + padding) / (range + padding * 2)) * 100);
-      return `${x},${y}`;
-    }).join(' ');
 
     const getHeartRateZone = (value: number) => {
       if (value < 60) return { zone: 'Low', color: '#3B82F6', label: 'Resting' };
       if (value < 100) return { zone: 'Normal', color: '#10B981', label: 'Healthy' };
       if (value < 140) return { zone: 'Elevated', color: '#F59E0B', label: 'Active' };
       return { zone: 'High', color: '#EF4444', label: 'Intense' };
+    };
+
+    const zoneDistribution = data.reduce((acc, point) => {
+      const zone = getHeartRateZone(point.value);
+      acc[zone.label] = (acc[zone.label] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const lineChartData = {
+      labels: data.map(d => d.date),
+      datasets: [
+        {
+          label: 'Heart Rate',
+          data: data.map(d => d.value),
+          borderColor: '#EF4444',
+          backgroundColor: (context: any) => {
+            const ctx = context.chart.ctx;
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(239, 68, 68, 0.4)');
+            gradient.addColorStop(1, 'rgba(239, 68, 68, 0.0)');
+            return gradient;
+          },
+          borderWidth: 3,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          pointBackgroundColor: data.map(d => getHeartRateZone(d.value).color),
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          pointHoverBackgroundColor: data.map(d => getHeartRateZone(d.value).color),
+          pointHoverBorderColor: '#fff',
+          pointHoverBorderWidth: 3,
+        }
+      ]
+    };
+
+    const lineChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          backgroundColor: '#1F2937',
+          titleColor: '#F7F7F7',
+          bodyColor: '#F7F7F7',
+          borderColor: '#374151',
+          borderWidth: 1,
+          padding: 12,
+          displayColors: false,
+          callbacks: {
+            label: function(context: any) {
+              const value = context.parsed.y;
+              const zone = getHeartRateZone(value);
+              return [
+                `Heart Rate: ${value} ${unit}`,
+                `Zone: ${zone.label}`,
+                `Status: ${zone.zone}`
+              ];
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: {
+            color: '#374151',
+            drawBorder: false
+          },
+          ticks: {
+            color: '#9CA3AF',
+            font: {
+              size: 11
+            }
+          }
+        },
+        y: {
+          grid: {
+            color: '#374151',
+            drawBorder: false
+          },
+          ticks: {
+            color: '#9CA3AF',
+            font: {
+              size: 11
+            },
+            callback: function(value: any) {
+              return value + ' ' + unit;
+            }
+          },
+          beginAtZero: false
+        }
+      }
+    };
+
+    const barChartData = {
+      labels: data.map(d => d.date),
+      datasets: [
+        {
+          label: 'Heart Rate',
+          data: data.map(d => d.value),
+          backgroundColor: data.map(d => {
+            const zone = getHeartRateZone(d.value);
+            return zone.color + '99';
+          }),
+          borderColor: data.map(d => getHeartRateZone(d.value).color),
+          borderWidth: 2,
+          borderRadius: 6,
+          borderSkipped: false,
+        }
+      ]
+    };
+
+    const barChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          backgroundColor: '#1F2937',
+          titleColor: '#F7F7F7',
+          bodyColor: '#F7F7F7',
+          borderColor: '#374151',
+          borderWidth: 1,
+          padding: 12,
+          displayColors: true,
+          callbacks: {
+            label: function(context: any) {
+              const value = context.parsed.y;
+              const zone = getHeartRateZone(value);
+              return `${value} ${unit} (${zone.label})`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: {
+            display: false
+          },
+          ticks: {
+            color: '#9CA3AF',
+            font: {
+              size: 11
+            }
+          }
+        },
+        y: {
+          grid: {
+            color: '#374151',
+            drawBorder: false
+          },
+          ticks: {
+            color: '#9CA3AF',
+            font: {
+              size: 11
+            },
+            callback: function(value: any) {
+              return value + ' ' + unit;
+            }
+          },
+          beginAtZero: false
+        }
+      }
+    };
+
+    const doughnutChartData = {
+      labels: ['Resting', 'Healthy', 'Active', 'Intense'],
+      datasets: [
+        {
+          data: [
+            zoneDistribution['Resting'] || 0,
+            zoneDistribution['Healthy'] || 0,
+            zoneDistribution['Active'] || 0,
+            zoneDistribution['Intense'] || 0
+          ],
+          backgroundColor: [
+            '#3B82F6',
+            '#10B981',
+            '#F59E0B',
+            '#EF4444'
+          ],
+          borderColor: '#1F2937',
+          borderWidth: 3,
+        }
+      ]
+    };
+
+    const doughnutChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom' as const,
+          labels: {
+            color: '#F7F7F7',
+            padding: 15,
+            font: {
+              size: 12
+            },
+            usePointStyle: true,
+            pointStyle: 'circle'
+          }
+        },
+        tooltip: {
+          backgroundColor: '#1F2937',
+          titleColor: '#F7F7F7',
+          bodyColor: '#F7F7F7',
+          borderColor: '#374151',
+          borderWidth: 1,
+          padding: 12,
+          callbacks: {
+            label: function(context: any) {
+              const total = data.length;
+              const value = context.parsed;
+              const percentage = ((value / total) * 100).toFixed(1);
+              return `${context.label}: ${value} days (${percentage}%)`;
+            }
+          }
+        }
+      },
+      cutout: '70%'
     };
 
     return (
@@ -254,75 +499,51 @@ const YourTwinPage: React.FC = () => {
           </div>
         </Card>
 
+        <Row gutter={[24, 24]}>
+          <Col xs={24} lg={16}>
+            <Card
+              className="shadow-lg rounded-xl border-0"
+              style={{ backgroundColor: '#111827', border: '1px solid #374151' }}
+            >
+              <div className="mb-4">
+                <Text strong style={{ color: '#F7F7F7', fontSize: '18px' }}>
+                  Heart Rate Trend (Line Chart)
+                </Text>
+              </div>
+              <div style={{ height: '350px', padding: '10px' }}>
+                <Line data={lineChartData} options={lineChartOptions} />
+              </div>
+            </Card>
+          </Col>
+
+          <Col xs={24} lg={8}>
+            <Card
+              className="shadow-lg rounded-xl border-0"
+              style={{ backgroundColor: '#111827', border: '1px solid #374151', height: '100%' }}
+            >
+              <div className="mb-4">
+                <Text strong style={{ color: '#F7F7F7', fontSize: '18px' }}>
+                  Zone Distribution
+                </Text>
+              </div>
+              <div style={{ height: '300px', padding: '10px' }}>
+                <Doughnut data={doughnutChartData} options={doughnutChartOptions} />
+              </div>
+            </Card>
+          </Col>
+        </Row>
+
         <Card
           className="shadow-lg rounded-xl border-0"
           style={{ backgroundColor: '#111827', border: '1px solid #374151' }}
         >
           <div className="mb-4">
             <Text strong style={{ color: '#F7F7F7', fontSize: '18px' }}>
-              Heart Rate Trend
+              Daily Heart Rate (Bar Chart)
             </Text>
           </div>
-
-          <div className="relative" style={{ width: '100%', height: '300px', backgroundColor: '#0A0F1A', borderRadius: '12px', padding: '20px' }}>
-            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="heartRateGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" style={{ stopColor: '#EF4444', stopOpacity: 0.6 }} />
-                  <stop offset="100%" style={{ stopColor: '#EF4444', stopOpacity: 0.1 }} />
-                </linearGradient>
-              </defs>
-
-              <polygon
-                points={`0,100 ${points} 100,100`}
-                fill="url(#heartRateGradient)"
-              />
-
-              <polyline
-                points={points}
-                fill="none"
-                stroke="#EF4444"
-                strokeWidth="0.8"
-                vectorEffect="non-scaling-stroke"
-              />
-
-              {data.map((point, index) => {
-                const x = (index / (data.length - 1)) * 100;
-                const y = 100 - (((point.value - minValue + padding) / (range + padding * 2)) * 100);
-                const zone = getHeartRateZone(point.value);
-                return (
-                  <circle
-                    key={index}
-                    cx={x}
-                    cy={y}
-                    r="1.2"
-                    fill={zone.color}
-                    stroke="#fff"
-                    strokeWidth="0.3"
-                    vectorEffect="non-scaling-stroke"
-                  />
-                );
-              })}
-            </svg>
-          </div>
-
-          <div className="mt-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
-            {data.map((point, index) => {
-              const zone = getHeartRateZone(point.value);
-              return (
-                <div key={index} className="text-center p-2 rounded-lg" style={{ backgroundColor: '#1F2937' }}>
-                  <Text style={{ color: '#9CA3AF', fontSize: '11px', display: 'block' }}>{point.date}</Text>
-                  <Text strong style={{ color: zone.color, fontSize: '16px', display: 'block', marginTop: '4px' }}>
-                    {point.value.toFixed(0)}
-                  </Text>
-                  <Text style={{ color: '#9CA3AF', fontSize: '10px', display: 'block' }}>{unit}</Text>
-                  <div
-                    className="w-2 h-2 rounded-full mx-auto mt-2"
-                    style={{ backgroundColor: zone.color }}
-                  />
-                </div>
-              );
-            })}
+          <div style={{ height: '350px', padding: '10px' }}>
+            <Bar data={barChartData} options={barChartOptions} />
           </div>
         </Card>
       </div>
