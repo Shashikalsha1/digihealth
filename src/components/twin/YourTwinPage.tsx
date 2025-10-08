@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Typography, Row, Col, Statistic, Button, Alert, Spin } from 'antd';
-import { 
-  Heart, 
-  Activity, 
-  Thermometer, 
-  Droplets, 
+import {
+  Heart,
+  Activity,
+  Thermometer,
+  Droplets,
   Footprints,
   Moon,
   Zap,
   RefreshCw,
   User,
   TrendingUp,
-  Clock
+  Clock,
+  ExternalLink
 } from 'lucide-react';
 import apiService from '../../services/apiService';
 
@@ -92,18 +93,59 @@ const YourTwinPage: React.FC = () => {
   };
 
   const Simple3DModel: React.FC = () => {
+    const [iframeError, setIframeError] = useState(false);
+    const splineUrl = 'https://my.spline.design/untitled-gDQkmatQc8qeHm9NYbc7valn/';
+
     return (
-      <div className="flex items-center justify-center h-full w-full">
-        <iframe
-          src='https://my.spline.design/untitled-gDQkmatQc8qeHm9NYbc7valn/'
-          style={{
-            border: 'none',
-            width: '100%',
-            height: '100%',
-            minHeight: '400px'
-          }}
-          title="3D Health Model"
-        />
+      <div className="flex flex-col items-center justify-center h-full w-full" style={{ minHeight: '400px' }}>
+        {iframeError ? (
+          <div className="text-center space-y-4">
+            <Text style={{ color: '#9CA3AF', display: 'block' }}>
+              Unable to load 3D model in iframe
+            </Text>
+            <Button
+              type="primary"
+              icon={<ExternalLink className="w-4 h-4" />}
+              onClick={() => window.open(splineUrl, '_blank')}
+              style={{
+                backgroundColor: '#00B58E',
+                borderColor: '#00B58E',
+              }}
+            >
+              Open 3D Model in New Tab
+            </Button>
+          </div>
+        ) : (
+          <>
+            <iframe
+              src={splineUrl}
+              frameBorder='0'
+              width='100%'
+              height='100%'
+              style={{
+                border: 'none',
+                width: '100%',
+                height: '100%',
+                minHeight: '400px',
+                background: 'transparent'
+              }}
+              title="3D Health Model"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              onError={() => setIframeError(true)}
+            />
+            <div className="mt-2">
+              <Button
+                type="link"
+                icon={<ExternalLink className="w-3 h-3" />}
+                onClick={() => window.open(splineUrl, '_blank')}
+                style={{ color: '#00B58E', fontSize: '12px' }}
+              >
+                Open in Full Screen
+              </Button>
+            </div>
+          </>
+        )}
       </div>
     );
   };
