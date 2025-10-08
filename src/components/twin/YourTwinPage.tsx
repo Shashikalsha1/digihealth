@@ -131,6 +131,204 @@ const YourTwinPage: React.FC = () => {
     }
   };
 
+  const HeartRateChart: React.FC<{ data: any[]; unit: string }> = ({ data, unit }) => {
+    const maxValue = Math.max(...data.map(d => d.value));
+    const minValue = Math.min(...data.map(d => d.value));
+    const avgValue = data.reduce((sum, d) => sum + d.value, 0) / data.length;
+    const range = maxValue - minValue;
+    const padding = range * 0.1;
+
+    const points = data.map((point, index) => {
+      const x = (index / (data.length - 1)) * 100;
+      const y = 100 - (((point.value - minValue + padding) / (range + padding * 2)) * 100);
+      return `${x},${y}`;
+    }).join(' ');
+
+    const getHeartRateZone = (value: number) => {
+      if (value < 60) return { zone: 'Low', color: '#3B82F6', label: 'Resting' };
+      if (value < 100) return { zone: 'Normal', color: '#10B981', label: 'Healthy' };
+      if (value < 140) return { zone: 'Elevated', color: '#F59E0B', label: 'Active' };
+      return { zone: 'High', color: '#EF4444', label: 'Intense' };
+    };
+
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <Card
+            className="shadow-lg rounded-xl border-0"
+            style={{ backgroundColor: '#111827', border: '1px solid #374151' }}
+          >
+            <div className="text-center">
+              <Text style={{ color: '#9CA3AF', fontSize: '14px' }}>Average</Text>
+              <div className="mt-2">
+                <Text strong style={{ color: '#10B981', fontSize: '32px' }}>
+                  {avgValue.toFixed(0)}
+                </Text>
+                <Text style={{ color: '#9CA3AF', fontSize: '16px', marginLeft: '4px' }}>{unit}</Text>
+              </div>
+              <div className="mt-2">
+                <Heart className="w-6 h-6 mx-auto" style={{ color: '#10B981' }} />
+              </div>
+            </div>
+          </Card>
+
+          <Card
+            className="shadow-lg rounded-xl border-0"
+            style={{ backgroundColor: '#111827', border: '1px solid #374151' }}
+          >
+            <div className="text-center">
+              <Text style={{ color: '#9CA3AF', fontSize: '14px' }}>Minimum</Text>
+              <div className="mt-2">
+                <Text strong style={{ color: '#3B82F6', fontSize: '32px' }}>
+                  {minValue.toFixed(0)}
+                </Text>
+                <Text style={{ color: '#9CA3AF', fontSize: '16px', marginLeft: '4px' }}>{unit}</Text>
+              </div>
+              <div className="mt-2">
+                <Text style={{ color: '#9CA3AF', fontSize: '12px' }}>
+                  {getHeartRateZone(minValue).label}
+                </Text>
+              </div>
+            </div>
+          </Card>
+
+          <Card
+            className="shadow-lg rounded-xl border-0"
+            style={{ backgroundColor: '#111827', border: '1px solid #374151' }}
+          >
+            <div className="text-center">
+              <Text style={{ color: '#9CA3AF', fontSize: '14px' }}>Maximum</Text>
+              <div className="mt-2">
+                <Text strong style={{ color: '#EF4444', fontSize: '32px' }}>
+                  {maxValue.toFixed(0)}
+                </Text>
+                <Text style={{ color: '#9CA3AF', fontSize: '16px', marginLeft: '4px' }}>{unit}</Text>
+              </div>
+              <div className="mt-2">
+                <Text style={{ color: '#9CA3AF', fontSize: '12px' }}>
+                  {getHeartRateZone(maxValue).label}
+                </Text>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        <Card
+          className="shadow-lg rounded-xl border-0"
+          style={{ backgroundColor: '#111827', border: '1px solid #374151' }}
+        >
+          <div className="mb-4">
+            <Text strong style={{ color: '#F7F7F7', fontSize: '18px' }}>
+              Heart Rate Zones
+            </Text>
+          </div>
+
+          <div className="space-y-3">
+            {[
+              { label: 'Resting Zone', range: '< 60 bpm', color: '#3B82F6', description: 'Relaxed state' },
+              { label: 'Healthy Zone', range: '60-100 bpm', color: '#10B981', description: 'Normal daily activity' },
+              { label: 'Active Zone', range: '100-140 bpm', color: '#F59E0B', description: 'Moderate exercise' },
+              { label: 'Intense Zone', range: '> 140 bpm', color: '#EF4444', description: 'Vigorous activity' }
+            ].map((zone, index) => (
+              <div key={index} className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: '#1F2937' }}>
+                <div className="flex items-center space-x-3">
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: zone.color }}
+                  />
+                  <div>
+                    <Text strong style={{ color: '#F7F7F7', fontSize: '14px' }}>
+                      {zone.label}
+                    </Text>
+                    <br />
+                    <Text style={{ color: '#9CA3AF', fontSize: '12px' }}>
+                      {zone.description}
+                    </Text>
+                  </div>
+                </div>
+                <Text style={{ color: zone.color, fontSize: '14px', fontWeight: 500 }}>
+                  {zone.range}
+                </Text>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card
+          className="shadow-lg rounded-xl border-0"
+          style={{ backgroundColor: '#111827', border: '1px solid #374151' }}
+        >
+          <div className="mb-4">
+            <Text strong style={{ color: '#F7F7F7', fontSize: '18px' }}>
+              Heart Rate Trend
+            </Text>
+          </div>
+
+          <div className="relative" style={{ width: '100%', height: '300px', backgroundColor: '#0A0F1A', borderRadius: '12px', padding: '20px' }}>
+            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="heartRateGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" style={{ stopColor: '#EF4444', stopOpacity: 0.6 }} />
+                  <stop offset="100%" style={{ stopColor: '#EF4444', stopOpacity: 0.1 }} />
+                </linearGradient>
+              </defs>
+
+              <polygon
+                points={`0,100 ${points} 100,100`}
+                fill="url(#heartRateGradient)"
+              />
+
+              <polyline
+                points={points}
+                fill="none"
+                stroke="#EF4444"
+                strokeWidth="0.8"
+                vectorEffect="non-scaling-stroke"
+              />
+
+              {data.map((point, index) => {
+                const x = (index / (data.length - 1)) * 100;
+                const y = 100 - (((point.value - minValue + padding) / (range + padding * 2)) * 100);
+                const zone = getHeartRateZone(point.value);
+                return (
+                  <circle
+                    key={index}
+                    cx={x}
+                    cy={y}
+                    r="1.2"
+                    fill={zone.color}
+                    stroke="#fff"
+                    strokeWidth="0.3"
+                    vectorEffect="non-scaling-stroke"
+                  />
+                );
+              })}
+            </svg>
+          </div>
+
+          <div className="mt-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+            {data.map((point, index) => {
+              const zone = getHeartRateZone(point.value);
+              return (
+                <div key={index} className="text-center p-2 rounded-lg" style={{ backgroundColor: '#1F2937' }}>
+                  <Text style={{ color: '#9CA3AF', fontSize: '11px', display: 'block' }}>{point.date}</Text>
+                  <Text strong style={{ color: zone.color, fontSize: '16px', display: 'block', marginTop: '4px' }}>
+                    {point.value.toFixed(0)}
+                  </Text>
+                  <Text style={{ color: '#9CA3AF', fontSize: '10px', display: 'block' }}>{unit}</Text>
+                  <div
+                    className="w-2 h-2 rounded-full mx-auto mt-2"
+                    style={{ backgroundColor: zone.color }}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      </div>
+    );
+  };
+
   const SimpleLineChart: React.FC<{ data: any[]; color: string; title: string; unit: string }> = ({
     data,
     color,
@@ -504,10 +702,8 @@ const YourTwinPage: React.FC = () => {
                 </span>
               ),
               children: (
-                <SimpleLineChart
+                <HeartRateChart
                   data={getHistoricalData('heart_rate')}
-                  color="#EF4444"
-                  title="Heart Rate Trend"
                   unit="bpm"
                 />
               )
