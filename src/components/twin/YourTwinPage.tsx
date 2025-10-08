@@ -1490,10 +1490,13 @@ const YourTwinPage: React.FC = () => {
               ),
               children: (
                 <div className="space-y-6">
-                  <div className="flex items-center justify-center">
+                  <div className="flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
                     <Radio.Group
                       value={bpType}
-                      onChange={(e) => setBpType(e.target.value)}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        setBpType(e.target.value);
+                      }}
                       buttonStyle="solid"
                       size="large"
                     >
@@ -1504,6 +1507,7 @@ const YourTwinPage: React.FC = () => {
                           borderColor: bpType === 'sys' ? '#F59E0B' : '#4B5563',
                           color: '#F7F7F7'
                         }}
+                        onClick={(e) => e.stopPropagation()}
                       >
                         Systolic
                       </Radio.Button>
@@ -1514,6 +1518,7 @@ const YourTwinPage: React.FC = () => {
                           borderColor: bpType === 'dia' ? '#10B981' : '#4B5563',
                           color: '#F7F7F7'
                         }}
+                        onClick={(e) => e.stopPropagation()}
                       >
                         Diastolic
                       </Radio.Button>
