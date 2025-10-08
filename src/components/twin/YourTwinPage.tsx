@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Typography, Row, Col, Statistic, Button, Alert, Spin } from 'antd';
+import { Card, Typography, Row, Col, Statistic, Button, Alert, Spin, Tabs, Select } from 'antd';
 import {
   Heart,
   Activity,
@@ -36,6 +36,7 @@ const YourTwinPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [timeRange, setTimeRange] = useState<'7days' | '1month'>('7days');
 
   useEffect(() => {
     fetchHealthData();
@@ -89,6 +90,117 @@ const YourTwinPage: React.FC = () => {
       default:
         return { status: 'Normal', color: '#10B981' };
     }
+  };
+
+  const generateMockData = (days: number, baseValue: number, variance: number) => {
+    const data = [];
+    const today = new Date();
+
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const value = baseValue + (Math.random() - 0.5) * variance;
+      data.push({
+        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        value: Math.round(value * 10) / 10
+      });
+    }
+    return data;
+  };
+
+  const getHistoricalData = (parameter: string) => {
+    const days = timeRange === '7days' ? 7 : 30;
+
+    switch (parameter) {
+      case 'heart_rate':
+        return generateMockData(days, 75, 15);
+      case 'blood_pressure_sys':
+        return generateMockData(days, 120, 20);
+      case 'blood_pressure_dia':
+        return generateMockData(days, 80, 10);
+      case 'temperature':
+        return generateMockData(days, 36.8, 1);
+      case 'oxygen_level':
+        return generateMockData(days, 98, 3);
+      case 'steps':
+        return generateMockData(days, 7500, 3000);
+      case 'sleep_hours':
+        return generateMockData(days, 7.5, 2);
+      default:
+        return [];
+    }
+  };
+
+  const SimpleLineChart: React.FC<{ data: any[]; color: string; title: string; unit: string }> = ({
+    data,
+    color,
+    title,
+    unit
+  }) => {
+    const maxValue = Math.max(...data.map(d => d.value));
+    const minValue = Math.min(...data.map(d => d.value));
+    const range = maxValue - minValue;
+    const padding = range * 0.1;
+
+    const points = data.map((point, index) => {
+      const x = (index / (data.length - 1)) * 100;
+      const y = 100 - (((point.value - minValue + padding) / (range + padding * 2)) * 100);
+      return `${x},${y}`;
+    }).join(' ');
+
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Text strong style={{ color: '#F7F7F7', fontSize: '16px' }}>
+            {title}
+          </Text>
+          <Text style={{ color: '#9CA3AF', fontSize: '14px' }}>
+            Average: {(data.reduce((sum, d) => sum + d.value, 0) / data.length).toFixed(1)} {unit}
+          </Text>
+        </div>
+
+        <div className="relative" style={{ width: '100%', height: '250px', backgroundColor: '#111827', borderRadius: '8px', padding: '20px' }}>
+          <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <polyline
+              points={points}
+              fill="none"
+              stroke={color}
+              strokeWidth="0.5"
+              vectorEffect="non-scaling-stroke"
+            />
+            {data.map((point, index) => {
+              const x = (index / (data.length - 1)) * 100;
+              const y = 100 - (((point.value - minValue + padding) / (range + padding * 2)) * 100);
+              return (
+                <circle
+                  key={index}
+                  cx={x}
+                  cy={y}
+                  r="1"
+                  fill={color}
+                  vectorEffect="non-scaling-stroke"
+                />
+              );
+            })}
+          </svg>
+        </div>
+
+        <div className="flex justify-between" style={{ paddingLeft: '20px', paddingRight: '20px' }}>
+          {data.map((point, index) => {
+            if (timeRange === '7days' || index % 3 === 0 || index === data.length - 1) {
+              return (
+                <div key={index} className="text-center">
+                  <Text style={{ color: '#9CA3AF', fontSize: '11px' }}>{point.date}</Text>
+                  <br />
+                  <Text style={{ color: color, fontSize: '12px', fontWeight: 500 }}>{point.value} {unit}</Text>
+                </div>
+              );
+            }
+            return null;
+          })}
+        </div>
+      </div>
+    );
   };
 
   const Simple3DModel: React.FC = () => {
@@ -401,6 +513,148 @@ const YourTwinPage: React.FC = () => {
           </div>
         </Col>
       </Row>
+
+      {/* Historical Data Tabs */}
+      <Card
+        className="shadow-lg rounded-xl border-0"
+        style={{
+          backgroundColor: '#1F2937',
+          border: '1px solid #374151'
+        }}
+      >
+        <div className="flex items-center justify-between mb-6">
+          <Title level={3} style={{ color: '#F7F7F7', marginBottom: 0 }}>
+            Historical Data
+          </Title>
+          <Select
+            value={timeRange}
+            onChange={(value) => setTimeRange(value)}
+            style={{ width: 150 }}
+            options={[
+              { value: '7days', label: 'Last 7 Days' },
+              { value: '1month', label: 'Last 30 Days' }
+            ]}
+          />
+        </div>
+
+        <Tabs
+          defaultActiveKey="heart_rate"
+          type="card"
+          items={[
+            {
+              key: 'heart_rate',
+              label: (
+                <span className="flex items-center space-x-2">
+                  <Heart className="w-4 h-4" />
+                  <span>Heart Rate</span>
+                </span>
+              ),
+              children: (
+                <SimpleLineChart
+                  data={getHistoricalData('heart_rate')}
+                  color="#EF4444"
+                  title="Heart Rate Trend"
+                  unit="bpm"
+                />
+              )
+            },
+            {
+              key: 'blood_pressure',
+              label: (
+                <span className="flex items-center space-x-2">
+                  <TrendingUp className="w-4 h-4" />
+                  <span>Blood Pressure</span>
+                </span>
+              ),
+              children: (
+                <div className="space-y-8">
+                  <SimpleLineChart
+                    data={getHistoricalData('blood_pressure_sys')}
+                    color="#F59E0B"
+                    title="Systolic Blood Pressure"
+                    unit="mmHg"
+                  />
+                  <SimpleLineChart
+                    data={getHistoricalData('blood_pressure_dia')}
+                    color="#10B981"
+                    title="Diastolic Blood Pressure"
+                    unit="mmHg"
+                  />
+                </div>
+              )
+            },
+            {
+              key: 'temperature',
+              label: (
+                <span className="flex items-center space-x-2">
+                  <Thermometer className="w-4 h-4" />
+                  <span>Temperature</span>
+                </span>
+              ),
+              children: (
+                <SimpleLineChart
+                  data={getHistoricalData('temperature')}
+                  color="#EF4444"
+                  title="Body Temperature Trend"
+                  unit="°C"
+                />
+              )
+            },
+            {
+              key: 'oxygen',
+              label: (
+                <span className="flex items-center space-x-2">
+                  <Droplets className="w-4 h-4" />
+                  <span>Oxygen Level</span>
+                </span>
+              ),
+              children: (
+                <SimpleLineChart
+                  data={getHistoricalData('oxygen_level')}
+                  color="#10B981"
+                  title="Blood Oxygen Level Trend"
+                  unit="%"
+                />
+              )
+            },
+            {
+              key: 'steps',
+              label: (
+                <span className="flex items-center space-x-2">
+                  <Footprints className="w-4 h-4" />
+                  <span>Steps</span>
+                </span>
+              ),
+              children: (
+                <SimpleLineChart
+                  data={getHistoricalData('steps')}
+                  color="#1D459A"
+                  title="Daily Steps Trend"
+                  unit="steps"
+                />
+              )
+            },
+            {
+              key: 'sleep',
+              label: (
+                <span className="flex items-center space-x-2">
+                  <Moon className="w-4 h-4" />
+                  <span>Sleep</span>
+                </span>
+              ),
+              children: (
+                <SimpleLineChart
+                  data={getHistoricalData('sleep_hours')}
+                  color="#8B5CF6"
+                  title="Sleep Duration Trend"
+                  unit="hours"
+                />
+              )
+            }
+          ]}
+          className="custom-tabs"
+        />
+      </Card>
     </div>
   );
 };
