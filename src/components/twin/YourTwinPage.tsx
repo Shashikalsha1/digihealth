@@ -135,12 +135,48 @@ const YourTwinPage: React.FC = () => {
     return data;
   };
 
+  const generateHeartRateData = (days: number) => {
+    const data = [];
+    const today = new Date();
+    const zones = [
+      { min: 50, max: 65, weight: 0.25 },
+      { min: 65, max: 100, weight: 0.4 },
+      { min: 100, max: 140, weight: 0.25 },
+      { min: 140, max: 170, weight: 0.1 }
+    ];
+
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+
+      const random = Math.random();
+      let cumulativeWeight = 0;
+      let selectedZone = zones[1];
+
+      for (const zone of zones) {
+        cumulativeWeight += zone.weight;
+        if (random <= cumulativeWeight) {
+          selectedZone = zone;
+          break;
+        }
+      }
+
+      const value = selectedZone.min + Math.random() * (selectedZone.max - selectedZone.min);
+
+      data.push({
+        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        value: Math.round(value)
+      });
+    }
+    return data;
+  };
+
   const getHistoricalData = (parameter: string) => {
     const days = timeRange === '7days' ? 7 : 30;
 
     switch (parameter) {
       case 'heart_rate':
-        return generateMockData(days, 75, 15);
+        return generateHeartRateData(days);
       case 'blood_pressure_sys':
         return generateMockData(days, 120, 20);
       case 'blood_pressure_dia':
@@ -159,6 +195,7 @@ const YourTwinPage: React.FC = () => {
   };
 
   const HeartRateChart: React.FC<{ data: any[]; unit: string }> = ({ data, unit }) => {
+    const [chartType, setChartType] = React.useState<'line' | 'bar'>('line');
     const maxValue = Math.max(...data.map(d => d.value));
     const minValue = Math.min(...data.map(d => d.value));
     const avgValue = data.reduce((sum, d) => sum + d.value, 0) / data.length;
@@ -505,13 +542,41 @@ const YourTwinPage: React.FC = () => {
               className="shadow-lg rounded-xl border-0"
               style={{ backgroundColor: '#111827', border: '1px solid #374151' }}
             >
-              <div className="mb-4">
+              <div className="flex items-center justify-between mb-4">
                 <Text strong style={{ color: '#F7F7F7', fontSize: '18px' }}>
-                  Heart Rate Trend (Line Chart)
+                  Heart Rate Trend
                 </Text>
+                <div className="flex items-center space-x-2">
+                  <Button
+                    type={chartType === 'line' ? 'primary' : 'default'}
+                    onClick={() => setChartType('line')}
+                    style={{
+                      backgroundColor: chartType === 'line' ? '#00B58E' : '#374151',
+                      borderColor: chartType === 'line' ? '#00B58E' : '#4B5563',
+                      color: '#F7F7F7'
+                    }}
+                  >
+                    Line Chart
+                  </Button>
+                  <Button
+                    type={chartType === 'bar' ? 'primary' : 'default'}
+                    onClick={() => setChartType('bar')}
+                    style={{
+                      backgroundColor: chartType === 'bar' ? '#00B58E' : '#374151',
+                      borderColor: chartType === 'bar' ? '#00B58E' : '#4B5563',
+                      color: '#F7F7F7'
+                    }}
+                  >
+                    Bar Chart
+                  </Button>
+                </div>
               </div>
               <div style={{ height: '350px', padding: '10px' }}>
-                <Line data={lineChartData} options={lineChartOptions} />
+                {chartType === 'line' ? (
+                  <Line data={lineChartData} options={lineChartOptions} />
+                ) : (
+                  <Bar data={barChartData} options={barChartOptions} />
+                )}
               </div>
             </Card>
           </Col>
@@ -532,20 +597,6 @@ const YourTwinPage: React.FC = () => {
             </Card>
           </Col>
         </Row>
-
-        <Card
-          className="shadow-lg rounded-xl border-0"
-          style={{ backgroundColor: '#111827', border: '1px solid #374151' }}
-        >
-          <div className="mb-4">
-            <Text strong style={{ color: '#F7F7F7', fontSize: '18px' }}>
-              Daily Heart Rate (Bar Chart)
-            </Text>
-          </div>
-          <div style={{ height: '350px', padding: '10px' }}>
-            <Bar data={barChartData} options={barChartOptions} />
-          </div>
-        </Card>
       </div>
     );
   };
