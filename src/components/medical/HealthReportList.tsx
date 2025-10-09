@@ -319,19 +319,19 @@ const HealthReportList: React.FC<HealthReportListProps> = ({ onViewDetail }) => 
             <div className="flex items-center space-x-6 mt-4">
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#00B58E' }}></div>
-                <Text style={{ color: '#9CA3AF', fontSize: '13px' }}>
+                <Text style={{ color: '#9CA3AF', fontSize: '13px', whiteSpace: 'nowrap' }}>
                   {scans.filter(s => s.is_analyzed).length} Analyzed
                 </Text>
               </div>
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#F59E0B' }}></div>
-                <Text style={{ color: '#9CA3AF', fontSize: '13px' }}>
+                <Text style={{ color: '#9CA3AF', fontSize: '13px', whiteSpace: 'nowrap' }}>
                   {scans.filter(s => !s.is_analyzed).length} Pending
                 </Text>
               </div>
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#6B7280' }}></div>
-                <Text style={{ color: '#9CA3AF', fontSize: '13px' }}>
+                <Text style={{ color: '#9CA3AF', fontSize: '13px', whiteSpace: 'nowrap' }}>
                   Total: {scans.length}
                 </Text>
               </div>

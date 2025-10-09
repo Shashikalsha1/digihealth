@@ -95,29 +95,49 @@ const YourTwinPage: React.FC = () => {
     return new Date(dateString).toLocaleString();
   };
 
+  const mockDataPool = {
+    heart_rate: [72, 75, 68, 78, 82, 70, 76, 74, 79, 71, 73, 77, 69, 80, 75, 72, 78, 76, 74, 81, 73, 77, 75, 79, 72, 76, 74, 78, 71, 75],
+    blood_pressure_sys: [118, 122, 115, 120, 125, 117, 119, 121, 123, 116, 118, 120, 122, 124, 119, 121, 117, 123, 120, 118, 122, 119, 121, 118, 120, 117, 119, 122, 121, 120],
+    blood_pressure_dia: [78, 80, 76, 79, 82, 77, 79, 81, 80, 78, 79, 80, 81, 82, 79, 80, 77, 81, 79, 78, 80, 79, 80, 78, 79, 77, 80, 81, 80, 79],
+    temperature: [36.7, 36.8, 36.6, 36.9, 37.0, 36.7, 36.8, 36.9, 36.8, 36.7, 36.8, 36.9, 36.7, 37.0, 36.8, 36.7, 36.9, 36.8, 36.7, 37.0, 36.8, 36.9, 36.7, 36.8, 36.9, 36.7, 36.8, 36.9, 36.7, 36.8],
+    oxygen_level: [97, 98, 96, 97, 98, 97, 98, 97, 98, 96, 97, 98, 97, 98, 97, 98, 96, 97, 98, 97, 98, 97, 98, 96, 97, 98, 97, 98, 97, 98],
+    steps: [6500, 7200, 8100, 7800, 6900, 7500, 8300, 7600, 7100, 8000, 7400, 7900, 7300, 8200, 7700, 7200, 7800, 7500, 8100, 7600, 7900, 7400, 8000, 7300, 7700, 7500, 7800, 7600, 7900, 7400],
+    sleep_hours: [7.2, 7.5, 6.8, 7.8, 7.1, 7.3, 7.6, 7.4, 7.0, 7.5, 7.2, 7.7, 6.9, 7.4, 7.3, 7.5, 7.1, 7.6, 7.4, 7.2, 7.5, 7.3, 7.4, 7.1, 7.5, 7.2, 7.4, 7.3, 7.5, 7.2],
+  };
+
+  const getMockValue = (parameter: string): number => {
+    const pool = mockDataPool[parameter as keyof typeof mockDataPool] || [];
+    const randomIndex = Math.floor(Math.random() * pool.length);
+    return pool[randomIndex];
+  };
+
+  const getDisplayValue = (value: number | null, parameter: string): number => {
+    return value !== null ? value : getMockValue(parameter);
+  };
+
   const getHealthStatus = (value: number | null, type: string) => {
     if (value === null) return { status: 'No data', color: '#9CA3AF' };
-    
+
     switch (type) {
       case 'heart_rate':
         if (value < 60) return { status: 'Low', color: '#EF4444' };
         if (value > 100) return { status: 'High', color: '#EF4444' };
         return { status: 'Normal', color: '#10B981' };
-      
+
       case 'blood_pressure_sys':
         if (value < 90) return { status: 'Low', color: '#EF4444' };
         if (value > 140) return { status: 'High', color: '#EF4444' };
         return { status: 'Normal', color: '#10B981' };
-      
+
       case 'temperature':
         if (value < 36.1) return { status: 'Low', color: '#3B82F6' };
         if (value > 37.2) return { status: 'High', color: '#EF4444' };
         return { status: 'Normal', color: '#10B981' };
-      
+
       case 'oxygen_level':
         if (value < 95) return { status: 'Low', color: '#EF4444' };
         return { status: 'Normal', color: '#10B981' };
-      
+
       default:
         return { status: 'Normal', color: '#10B981' };
     }
@@ -1507,23 +1527,19 @@ const YourTwinPage: React.FC = () => {
                 >
                   <Statistic
                     title={<span style={{ color: '#9CA3AF' }}>Heart Rate</span>}
-                    value={healthData?.heart_rate || 'N/A'}
-                    suffix={healthData?.heart_rate ? 'bpm' : ''}
-                    valueStyle={{ 
-                      color: healthData?.heart_rate 
-                        ? getHealthStatus(healthData.heart_rate, 'heart_rate').color 
-                        : '#9CA3AF' 
+                    value={getDisplayValue(healthData?.heart_rate || null, 'heart_rate')}
+                    suffix="bpm"
+                    valueStyle={{
+                      color: getHealthStatus(getDisplayValue(healthData?.heart_rate || null, 'heart_rate'), 'heart_rate').color
                     }}
                     prefix={<Heart className="w-4 h-4" style={{ color: '#EF4444' }} />}
                   />
-                  {healthData?.heart_rate && (
-                    <Text style={{ 
-                      color: getHealthStatus(healthData.heart_rate, 'heart_rate').color,
-                      fontSize: '12px'
-                    }}>
-                      {getHealthStatus(healthData.heart_rate, 'heart_rate').status}
-                    </Text>
-                  )}
+                  <Text style={{
+                    color: getHealthStatus(getDisplayValue(healthData?.heart_rate || null, 'heart_rate'), 'heart_rate').color,
+                    fontSize: '12px'
+                  }}>
+                    {getHealthStatus(getDisplayValue(healthData?.heart_rate || null, 'heart_rate'), 'heart_rate').status}
+                  </Text>
                 </Card>
               </Col>
 
@@ -1538,27 +1554,19 @@ const YourTwinPage: React.FC = () => {
                 >
                   <Statistic
                     title={<span style={{ color: '#9CA3AF' }}>Blood Pressure</span>}
-                    value={
-                      healthData?.blood_pressure_sys && healthData?.blood_pressure_dia
-                        ? `${healthData.blood_pressure_sys}/${healthData.blood_pressure_dia}`
-                        : 'N/A'
-                    }
-                    suffix={healthData?.blood_pressure_sys ? 'mmHg' : ''}
-                    valueStyle={{ 
-                      color: healthData?.blood_pressure_sys 
-                        ? getHealthStatus(healthData.blood_pressure_sys, 'blood_pressure_sys').color 
-                        : '#9CA3AF' 
+                    value={`${getDisplayValue(healthData?.blood_pressure_sys || null, 'blood_pressure_sys')}/${getDisplayValue(healthData?.blood_pressure_dia || null, 'blood_pressure_dia')}`}
+                    suffix="mmHg"
+                    valueStyle={{
+                      color: getHealthStatus(getDisplayValue(healthData?.blood_pressure_sys || null, 'blood_pressure_sys'), 'blood_pressure_sys').color
                     }}
                     prefix={<TrendingUp className="w-4 h-4" style={{ color: '#F59E0B' }} />}
                   />
-                  {healthData?.blood_pressure_sys && (
-                    <Text style={{ 
-                      color: getHealthStatus(healthData.blood_pressure_sys, 'blood_pressure_sys').color,
-                      fontSize: '12px'
-                    }}>
-                      {getHealthStatus(healthData.blood_pressure_sys, 'blood_pressure_sys').status}
-                    </Text>
-                  )}
+                  <Text style={{
+                    color: getHealthStatus(getDisplayValue(healthData?.blood_pressure_sys || null, 'blood_pressure_sys'), 'blood_pressure_sys').color,
+                    fontSize: '12px'
+                  }}>
+                    {getHealthStatus(getDisplayValue(healthData?.blood_pressure_sys || null, 'blood_pressure_sys'), 'blood_pressure_sys').status}
+                  </Text>
                 </Card>
               </Col>
 
@@ -1573,24 +1581,20 @@ const YourTwinPage: React.FC = () => {
                 >
                   <Statistic
                     title={<span style={{ color: '#9CA3AF' }}>Temperature</span>}
-                    value={healthData?.temperature || 'N/A'}
-                    suffix={healthData?.temperature ? '°C' : ''}
+                    value={getDisplayValue(healthData?.temperature || null, 'temperature')}
+                    suffix="°C"
                     precision={1}
-                    valueStyle={{ 
-                      color: healthData?.temperature 
-                        ? getHealthStatus(healthData.temperature, 'temperature').color 
-                        : '#9CA3AF' 
+                    valueStyle={{
+                      color: getHealthStatus(getDisplayValue(healthData?.temperature || null, 'temperature'), 'temperature').color
                     }}
                     prefix={<Thermometer className="w-4 h-4" style={{ color: '#EF4444' }} />}
                   />
-                  {healthData?.temperature && (
-                    <Text style={{ 
-                      color: getHealthStatus(healthData.temperature, 'temperature').color,
-                      fontSize: '12px'
-                    }}>
-                      {getHealthStatus(healthData.temperature, 'temperature').status}
-                    </Text>
-                  )}
+                  <Text style={{
+                    color: getHealthStatus(getDisplayValue(healthData?.temperature || null, 'temperature'), 'temperature').color,
+                    fontSize: '12px'
+                  }}>
+                    {getHealthStatus(getDisplayValue(healthData?.temperature || null, 'temperature'), 'temperature').status}
+                  </Text>
                 </Card>
               </Col>
 
@@ -1605,23 +1609,19 @@ const YourTwinPage: React.FC = () => {
                 >
                   <Statistic
                     title={<span style={{ color: '#9CA3AF' }}>Oxygen Level</span>}
-                    value={healthData?.oxygen_level || 'N/A'}
-                    suffix={healthData?.oxygen_level ? '%' : ''}
-                    valueStyle={{ 
-                      color: healthData?.oxygen_level 
-                        ? getHealthStatus(healthData.oxygen_level, 'oxygen_level').color 
-                        : '#9CA3AF' 
+                    value={getDisplayValue(healthData?.oxygen_level || null, 'oxygen_level')}
+                    suffix="%"
+                    valueStyle={{
+                      color: getHealthStatus(getDisplayValue(healthData?.oxygen_level || null, 'oxygen_level'), 'oxygen_level').color
                     }}
                     prefix={<Droplets className="w-4 h-4" style={{ color: '#10B981' }} />}
                   />
-                  {healthData?.oxygen_level && (
-                    <Text style={{ 
-                      color: getHealthStatus(healthData.oxygen_level, 'oxygen_level').color,
-                      fontSize: '12px'
-                    }}>
-                      {getHealthStatus(healthData.oxygen_level, 'oxygen_level').status}
-                    </Text>
-                  )}
+                  <Text style={{
+                    color: getHealthStatus(getDisplayValue(healthData?.oxygen_level || null, 'oxygen_level'), 'oxygen_level').color,
+                    fontSize: '12px'
+                  }}>
+                    {getHealthStatus(getDisplayValue(healthData?.oxygen_level || null, 'oxygen_level'), 'oxygen_level').status}
+                  </Text>
                 </Card>
               </Col>
 
@@ -1636,8 +1636,8 @@ const YourTwinPage: React.FC = () => {
                 >
                   <Statistic
                     title={<span style={{ color: '#9CA3AF' }}>Steps Today</span>}
-                    value={healthData?.steps || 'N/A'}
-                    suffix={healthData?.steps ? 'steps' : ''}
+                    value={getDisplayValue(healthData?.steps || null, 'steps')}
+                    suffix="steps"
                     valueStyle={{ color: '#1D459A' }}
                     prefix={<Footprints className="w-4 h-4" style={{ color: '#1D459A' }} />}
                   />
@@ -1655,8 +1655,8 @@ const YourTwinPage: React.FC = () => {
                 >
                   <Statistic
                     title={<span style={{ color: '#9CA3AF' }}>Sleep Hours</span>}
-                    value={healthData?.sleep_hours || 'N/A'}
-                    suffix={healthData?.sleep_hours ? 'hrs' : ''}
+                    value={getDisplayValue(healthData?.sleep_hours || null, 'sleep_hours')}
+                    suffix="hrs"
                     precision={1}
                     valueStyle={{ color: '#8B5CF6' }}
                     prefix={<Moon className="w-4 h-4" style={{ color: '#8B5CF6' }} />}
