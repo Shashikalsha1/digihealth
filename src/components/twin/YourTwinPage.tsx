@@ -1441,7 +1441,7 @@ const YourTwinPage: React.FC = () => {
   };
 
   const LiveView = () => (
-    <Row gutter={24} style={{ minHeight: '600px' }}>
+    <Row gutter={24} style={{ minHeight: '600px', marginTop: '24px' }}>
         {/* Left Side - 3D Model */}
         <Col xs={24} lg={12}>
           <Card
@@ -1493,7 +1493,7 @@ const YourTwinPage: React.FC = () => {
 
         {/* Right Side - Live Data */}
         <Col xs={24} lg={12}>
-          <div className="space-y-4 mt-6">
+          <div className="space-y-4" style={{ marginTop: '24px' }}>
             {/* Health Metrics Grid */}
             <Row gutter={[16, 16]}>
               {/* Heart Rate */}
@@ -1858,7 +1858,7 @@ const YourTwinPage: React.FC = () => {
     };
 
     return (
-      <div className="flex" style={{ minHeight: '600px', gap: '24px' }}>
+      <div className="flex" style={{ minHeight: '600px', gap: '24px', marginTop: '24px' }}>
         <Card
           className="shadow-lg rounded-xl border-0"
           style={{
