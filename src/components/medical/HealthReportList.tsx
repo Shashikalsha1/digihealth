@@ -68,34 +68,52 @@ const HealthReportList: React.FC<HealthReportListProps> = ({ onViewDetail }) => 
     }
   };
 
-  const uploadProps: UploadProps = {
-    name: 'image',
-    multiple: false,
-    accept: '.jpg,.jpeg,.png,.gif,.bmp,.tiff',
-    beforeUpload: (file) => {
-      const isImage = file.type.startsWith('image/');
-      if (!isImage) {
-        message.error('You can only upload image files!');
+  const getUploadProps = (scanType: string): UploadProps => {
+    const isReport = scanType === 'REPORT';
+
+    return {
+      name: isReport ? 'report_file' : 'image',
+      multiple: false,
+      accept: isReport ? '.pdf,.doc,.docx' : '.jpg,.jpeg,.png,.gif,.bmp,.tiff',
+      beforeUpload: (file) => {
+        if (isReport) {
+          const isPDF = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+          const isDoc = file.type === 'application/msword' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+          if (!isPDF && !isDoc) {
+            message.error('You can only upload PDF or Word documents!');
+            return false;
+          }
+          const isLt20M = file.size / 1024 / 1024 < 20;
+          if (!isLt20M) {
+            message.error('File must be smaller than 20MB!');
+            return false;
+          }
+        } else {
+          const isImage = file.type.startsWith('image/');
+          if (!isImage) {
+            message.error('You can only upload image files!');
+            return false;
+          }
+          const isLt10M = file.size / 1024 / 1024 < 10;
+          if (!isLt10M) {
+            message.error('Image must be smaller than 10MB!');
+            return false;
+          }
+        }
         return false;
-      }
-      const isLt10M = file.size / 1024 / 1024 < 10;
-      if (!isLt10M) {
-        message.error('Image must be smaller than 10MB!');
-        return false;
-      }
-      return false; // Prevent auto upload
-    },
-    onChange: (info) => {
-      setFileList(info.fileList);
-    },
-    onRemove: () => {
-      setFileList([]);
-    },
+      },
+      onChange: (info) => {
+        setFileList(info.fileList);
+      },
+      onRemove: () => {
+        setFileList([]);
+      },
+    };
   };
 
   const handleNewCase = async (values: { scan_type: string }) => {
     if (fileList.length === 0) {
-      setFormError('Please select an image file to upload');
+      setFormError('Please select a file to upload');
       return;
     }
 
@@ -105,21 +123,24 @@ const HealthReportList: React.FC<HealthReportListProps> = ({ onViewDetail }) => 
 
       const formData = new FormData();
       formData.append('scan_type', values.scan_type);
-      formData.append('image', fileList[0].originFileObj);
+
+      const isReport = values.scan_type === 'REPORT';
+      const fieldName = isReport ? 'report_file' : 'image';
+      formData.append(fieldName, fileList[0].originFileObj);
 
       await apiService.uploadMedicalScan(formData);
-      
-      message.success('Medical scan uploaded and analyzed successfully!');
+
+      message.success(isReport ? 'Medical report uploaded and analyzed successfully!' : 'Medical scan uploaded and analyzed successfully!');
       setModalVisible(false);
       form.resetFields();
       setFileList([]);
-      fetchScans(); // Refresh the list
+      fetchScans();
     } catch (err: any) {
       const errorMessage =
         err.response?.data?.message ||
         err.response?.data?.error ||
         'Upload failed. Please try again.';
-      
+
       setFormError(errorMessage);
       message.error('Upload failed. Please try again.');
     } finally {
@@ -150,14 +171,24 @@ const HealthReportList: React.FC<HealthReportListProps> = ({ onViewDetail }) => 
       dataIndex: 'scan_type_display',
       key: 'scan_type',
       width: 100,
-      render: (type, record) => (
-        <Tag 
-          color={record.scan_type === 'XRAY' ? '#00B58E' : '#1D459A'}
-          icon={record.scan_type === 'XRAY' ? <FileImage className="w-3 h-3" /> : <Activity className="w-3 h-3" />}
-        >
-          {type}
-        </Tag>
-      ),
+      render: (type, record) => {
+        let color = '#00B58E';
+        let icon = <FileImage className="w-3 h-3" />;
+
+        if (record.scan_type === 'ECG') {
+          color = '#1D459A';
+          icon = <Activity className="w-3 h-3" />;
+        } else if (record.scan_type === 'REPORT') {
+          color = '#F59E0B';
+          icon = <FileText className="w-3 h-3" />;
+        }
+
+        return (
+          <Tag color={color} icon={icon}>
+            {type}
+          </Tag>
+        );
+      },
     },
     {
       title: 'Patient',
@@ -321,28 +352,46 @@ const HealthReportList: React.FC<HealthReportListProps> = ({ onViewDetail }) => 
           </Form.Item>
 
           <Form.Item
-            label={<span style={{ color: '#F7F7F7', fontWeight: 500 }}>Medical Image</span>}
-            required
+            noStyle
+            shouldUpdate={(prevValues, currentValues) => prevValues.scan_type !== currentValues.scan_type}
           >
-            <Upload.Dragger
-              {...uploadProps}
-              fileList={fileList}
-              className="rounded-lg"
-              style={{
-                backgroundColor: '#2a2a2a',
-                border: '2px dashed #404040',
-              }}
-            >
-              <div className="p-6">
-                <UploadIcon className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                <Title level={4} style={{ color: '#F7F7F7', marginBottom: 8 }}>
-                  Click or drag file to upload
-                </Title>
-                <Text style={{ color: '#9CA3AF' }}>
-                  Support for JPG, PNG, GIF, BMP, TIFF (Max: 10MB)
-                </Text>
-              </div>
-            </Upload.Dragger>
+            {({ getFieldValue }) => {
+              const scanType = getFieldValue('scan_type');
+              const isReport = scanType === 'REPORT';
+
+              return (
+                <Form.Item
+                  label={<span style={{ color: '#F7F7F7', fontWeight: 500 }}>{isReport ? 'Medical Report' : 'Medical Image'}</span>}
+                  required
+                >
+                  <Upload.Dragger
+                    {...getUploadProps(scanType)}
+                    fileList={fileList}
+                    className="rounded-lg"
+                    style={{
+                      backgroundColor: '#2a2a2a',
+                      border: '2px dashed #404040',
+                    }}
+                  >
+                    <div className="p-6">
+                      {isReport ? (
+                        <FileText className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                      ) : (
+                        <UploadIcon className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                      )}
+                      <Title level={4} style={{ color: '#F7F7F7', marginBottom: 8 }}>
+                        Click or drag file to upload
+                      </Title>
+                      <Text style={{ color: '#9CA3AF' }}>
+                        {isReport
+                          ? 'Support for PDF, DOC, DOCX (Max: 20MB)'
+                          : 'Support for JPG, PNG, GIF, BMP, TIFF (Max: 10MB)'}
+                      </Text>
+                    </div>
+                  </Upload.Dragger>
+                </Form.Item>
+              );
+            }}
           </Form.Item>
 
           <Form.Item className="mb-0">
