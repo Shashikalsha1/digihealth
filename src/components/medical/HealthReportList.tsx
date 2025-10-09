@@ -13,13 +13,14 @@ import {
   message,
   Spin
 } from 'antd';
-import { 
-  Plus, 
-  FileImage, 
-  Activity, 
+import {
+  Plus,
+  FileImage,
+  Activity,
   Calendar,
   Eye,
-  Upload as UploadIcon
+  Upload as UploadIcon,
+  FileText
 } from 'lucide-react';
 import type { ColumnsType } from 'antd/es/table';
 import type { UploadProps } from 'antd';
@@ -46,6 +47,7 @@ const HealthReportList: React.FC<HealthReportListProps> = ({ onViewDetail }) => 
   const scanTypes = [
     { value: 'XRAY', label: 'X-Ray', icon: <FileImage className="w-4 h-4" /> },
     { value: 'ECG', label: 'ECG', icon: <Activity className="w-4 h-4" /> },
+    { value: 'REPORT', label: 'Medical Report', icon: <FileText className="w-4 h-4" /> },
   ];
 
   useEffect(() => {

@@ -12,14 +12,15 @@ import {
   Divider,
   Tag
 } from 'antd';
-import { 
-  Upload as UploadIcon, 
-  FileImage, 
-  Activity, 
+import {
+  Upload as UploadIcon,
+  FileImage,
+  Activity,
   CheckCircle,
   AlertCircle,
   Calendar,
-  User
+  User,
+  FileText
 } from 'lucide-react';
 import type { UploadProps } from 'antd';
 import apiService from '../../services/apiService';
@@ -39,36 +40,55 @@ const HealthReportUpload: React.FC = () => {
   const scanTypes = [
     { value: 'XRAY', label: 'X-Ray', icon: <FileImage className="w-4 h-4" /> },
     { value: 'ECG', label: 'ECG', icon: <Activity className="w-4 h-4" /> },
+    { value: 'REPORT', label: 'Medical Report', icon: <FileText className="w-4 h-4" /> },
   ];
 
-  const uploadProps: UploadProps = {
-    name: 'image',
-    multiple: false,
-    accept: '.jpg,.jpeg,.png,.gif,.bmp,.tiff',
-    beforeUpload: (file) => {
-      const isImage = file.type.startsWith('image/');
-      if (!isImage) {
-        message.error('You can only upload image files!');
+  const getUploadProps = (scanType: string): UploadProps => {
+    const isReport = scanType === 'REPORT';
+
+    return {
+      name: isReport ? 'report_file' : 'image',
+      multiple: false,
+      accept: isReport ? '.pdf,.doc,.docx' : '.jpg,.jpeg,.png,.gif,.bmp,.tiff',
+      beforeUpload: (file) => {
+        if (isReport) {
+          const isPDF = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+          const isDoc = file.type === 'application/msword' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+          if (!isPDF && !isDoc) {
+            message.error('You can only upload PDF or Word documents!');
+            return false;
+          }
+          const isLt20M = file.size / 1024 / 1024 < 20;
+          if (!isLt20M) {
+            message.error('File must be smaller than 20MB!');
+            return false;
+          }
+        } else {
+          const isImage = file.type.startsWith('image/');
+          if (!isImage) {
+            message.error('You can only upload image files!');
+            return false;
+          }
+          const isLt10M = file.size / 1024 / 1024 < 10;
+          if (!isLt10M) {
+            message.error('Image must be smaller than 10MB!');
+            return false;
+          }
+        }
         return false;
-      }
-      const isLt10M = file.size / 1024 / 1024 < 10;
-      if (!isLt10M) {
-        message.error('Image must be smaller than 10MB!');
-        return false;
-      }
-      return false; // Prevent auto upload
-    },
-    onChange: (info) => {
-      setFileList(info.fileList);
-    },
-    onRemove: () => {
-      setFileList([]);
-    },
+      },
+      onChange: (info) => {
+        setFileList(info.fileList);
+      },
+      onRemove: () => {
+        setFileList([]);
+      },
+    };
   };
 
   const onFinish = async (values: { scan_type: string }) => {
     if (fileList.length === 0) {
-      setFormError('Please select an image file to upload');
+      setFormError('Please select a file to upload');
       return;
     }
 
@@ -79,12 +99,15 @@ const HealthReportUpload: React.FC = () => {
 
       const formData = new FormData();
       formData.append('scan_type', values.scan_type);
-      formData.append('image', fileList[0].originFileObj);
+
+      const isReport = values.scan_type === 'REPORT';
+      const fieldName = isReport ? 'report_file' : 'image';
+      formData.append(fieldName, fileList[0].originFileObj);
 
       const response = await apiService.uploadMedicalScan(formData);
       setUploadResult(response);
-      
-      message.success('Medical scan uploaded and analyzed successfully!');
+
+      message.success(isReport ? 'Medical report uploaded and analyzed successfully!' : 'Medical scan uploaded and analyzed successfully!');
       form.resetFields();
       setFileList([]);
     } catch (err: any) {
@@ -92,7 +115,7 @@ const HealthReportUpload: React.FC = () => {
         err.response?.data?.message ||
         err.response?.data?.error ||
         'Upload failed. Please try again.';
-      
+
       setFormError(errorMessage);
       message.error('Upload failed. Please try again.');
     } finally {
@@ -140,10 +163,10 @@ const HealthReportUpload: React.FC = () => {
       >
         <div className="mb-6">
           <Title level={3} style={{ color: '#F7F7F7', marginBottom: 8 }}>
-            Upload Medical Scan
+            Upload Medical Scan or Report
           </Title>
           <Text style={{ color: '#9CA3AF' }}>
-            Upload your X-Ray or ECG scan for AI-powered analysis
+            Upload your X-Ray, ECG scan, or medical report (PDF) for AI-powered analysis
           </Text>
         </div>
 
@@ -178,28 +201,46 @@ const HealthReportUpload: React.FC = () => {
           </Form.Item>
 
           <Form.Item
-            label={<span style={{ color: '#F7F7F7', fontWeight: 500 }}>Medical Image</span>}
-            required
+            noStyle
+            shouldUpdate={(prevValues, currentValues) => prevValues.scan_type !== currentValues.scan_type}
           >
-            <Upload.Dragger
-              {...uploadProps}
-              fileList={fileList}
-              className="rounded-lg"
-              style={{
-                backgroundColor: '#2a2a2a',
-                border: '2px dashed #404040',
-              }}
-            >
-              <div className="p-6">
-                <UploadIcon className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                <Title level={4} style={{ color: '#F7F7F7', marginBottom: 8 }}>
-                  Click or drag file to upload
-                </Title>
-                <Text style={{ color: '#9CA3AF' }}>
-                  Support for JPG, PNG, GIF, BMP, TIFF (Max: 10MB)
-                </Text>
-              </div>
-            </Upload.Dragger>
+            {({ getFieldValue }) => {
+              const scanType = getFieldValue('scan_type');
+              const isReport = scanType === 'REPORT';
+
+              return (
+                <Form.Item
+                  label={<span style={{ color: '#F7F7F7', fontWeight: 500 }}>{isReport ? 'Medical Report' : 'Medical Image'}</span>}
+                  required
+                >
+                  <Upload.Dragger
+                    {...getUploadProps(scanType)}
+                    fileList={fileList}
+                    className="rounded-lg"
+                    style={{
+                      backgroundColor: '#2a2a2a',
+                      border: '2px dashed #404040',
+                    }}
+                  >
+                    <div className="p-6">
+                      {isReport ? (
+                        <FileText className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                      ) : (
+                        <UploadIcon className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                      )}
+                      <Title level={4} style={{ color: '#F7F7F7', marginBottom: 8 }}>
+                        Click or drag file to upload
+                      </Title>
+                      <Text style={{ color: '#9CA3AF' }}>
+                        {isReport
+                          ? 'Support for PDF, DOC, DOCX (Max: 20MB)'
+                          : 'Support for JPG, PNG, GIF, BMP, TIFF (Max: 10MB)'}
+                      </Text>
+                    </div>
+                  </Upload.Dragger>
+                </Form.Item>
+              );
+            }}
           </Form.Item>
 
           <Form.Item>
@@ -308,7 +349,7 @@ const HealthReportUpload: React.FC = () => {
                 <Text strong style={{ color: '#F7F7F7' }}>AI Model:</Text>
                 <br />
                 <Text style={{ color: '#9CA3AF' }}>
-                  {uploadResult.data.ai_analysis_report?.openai_analysis?.model_used || 'N/A'}
+                  {uploadResult.data.ai_analysis_report?.model_used || uploadResult.data.ai_analysis_report?.openai_analysis?.model_used || 'N/A'}
                 </Text>
               </div>
             </div>
@@ -346,9 +387,11 @@ const HealthReportUpload: React.FC = () => {
             </div>
 
             {/* Secondary Analysis from ai_analysis_report if different */}
-            {uploadResult.data.ai_analysis_report?.openai_analysis?.analysis && 
-             uploadResult.data.ai_analysis_report.openai_analysis.analysis !== uploadResult.data.diagnosis && (
-              <div 
+            {((uploadResult.data.ai_analysis_report?.openai_analysis?.analysis &&
+             uploadResult.data.ai_analysis_report.openai_analysis.analysis !== uploadResult.data.diagnosis) ||
+             (uploadResult.data.ai_analysis_report?.analysis &&
+             uploadResult.data.ai_analysis_report.analysis !== uploadResult.data.diagnosis)) && (
+              <div
                 className="p-4 rounded-lg mt-4"
                 style={{ backgroundColor: '#2a2a2a', border: '1px solid #404040' }}
               >
@@ -358,14 +401,14 @@ const HealthReportUpload: React.FC = () => {
                   </Text>
                 </div>
                 <Paragraph style={{ color: '#F7F7F7', marginBottom: 0 }}>
-                  <pre style={{ 
-                    whiteSpace: 'pre-wrap', 
+                  <pre style={{
+                    whiteSpace: 'pre-wrap',
                     fontFamily: 'inherit',
                     color: '#F7F7F7',
                     fontSize: '14px',
                     lineHeight: '1.6'
                   }}>
-                    {uploadResult.data.ai_analysis_report.openai_analysis.analysis}
+                    {uploadResult.data.ai_analysis_report?.analysis || uploadResult.data.ai_analysis_report?.openai_analysis?.analysis}
                   </pre>
                 </Paragraph>
               </div>
