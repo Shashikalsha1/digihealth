@@ -258,7 +258,7 @@ const HealthReportList: React.FC<HealthReportListProps> = ({ onViewDetail }) => 
           ) : (
             <AlertCircle className="w-4 h-4" style={{ color: '#F59E0B' }} />
           )}
-          <Text strong style={{ color: isAnalyzed ? '#10B981' : '#F59E0B', fontSize: '13px' }}>
+          <Text strong style={{ color: isAnalyzed ? '#10B981' : '#F59E0B', fontSize: '13px', whiteSpace: 'nowrap' }}>
             {isAnalyzed ? 'Analyzed' : 'Pending'}
           </Text>
         </div>
