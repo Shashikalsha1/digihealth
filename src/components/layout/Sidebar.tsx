@@ -58,7 +58,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             <img
               src="/QQ Health Logo-01 1.png"
               alt="QQ Health Logo"
-              className="h-8 w-auto"
+              className="h-12 w-auto"
             />
           </div>
         )}
@@ -67,7 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             <img
               src="/QQ Health Logo-01 1.png"
               alt="QQ Health Logo"
-              className="h-8 w-auto"
+              className="h-10 w-auto"
             />
           </div>
         )}

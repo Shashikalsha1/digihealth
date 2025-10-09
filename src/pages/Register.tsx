@@ -95,7 +95,7 @@ const Register: React.FC = () => {
               <img
                 src="/QQ Health Logo-01 1.png"
                 alt="QQ Health Logo"
-                className="h-16 w-auto"
+                className="h-20 w-auto"
               />
             </div>
             <Title level={2} style={{ color: '#46454D', marginBottom: 8 }}>
