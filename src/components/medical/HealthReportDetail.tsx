@@ -12,14 +12,16 @@ import {
   Divider,
   Image
 } from 'antd';
-import { 
-  ArrowLeft, 
-  Calendar, 
-  User, 
-  FileImage, 
+import {
+  ArrowLeft,
+  Calendar,
+  User,
+  FileImage,
   Activity,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  FileText,
+  Download
 } from 'lucide-react';
 import apiService from '../../services/apiService';
 import type { MedicalScanResponse } from '../../services/apiService';
@@ -125,9 +127,16 @@ const HealthReportDetail: React.FC<HealthReportDetailProps> = ({ scanId, onBack 
             <div className="mb-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-3">
-                  <Tag 
-                    color={scan.scan_type === 'XRAY' ? '#00B58E' : '#1D459A'}
-                    icon={scan.scan_type === 'XRAY' ? <FileImage className="w-3 h-3" /> : <Activity className="w-3 h-3" />}
+                  <Tag
+                    color={
+                      scan.scan_type === 'XRAY' ? '#00B58E' :
+                      scan.scan_type === 'REPORT' ? '#F59E0B' : '#1D459A'
+                    }
+                    icon={
+                      scan.scan_type === 'XRAY' ? <FileImage className="w-3 h-3" /> :
+                      scan.scan_type === 'REPORT' ? <FileText className="w-3 h-3" /> :
+                      <Activity className="w-3 h-3" />
+                    }
                     className="text-sm px-3 py-1"
                   >
                     {scan.scan_type_display}
@@ -255,43 +264,84 @@ const HealthReportDetail: React.FC<HealthReportDetailProps> = ({ scanId, onBack 
           </Card>
         </Col>
 
-        {/* Right Column - Image */}
+        {/* Right Column - Image or Report File */}
         <Col xs={24} lg={8}>
           <Card
             className="shadow-lg rounded-xl border-0"
-            style={{ 
+            style={{
               backgroundColor: '#1F2937',
               border: '1px solid #374151'
             }}
           >
             <Title level={4} style={{ color: '#F7F7F7', marginBottom: 16 }}>
-              Medical Image
+              {scan.report_file ? 'Medical Report File' : 'Medical Image'}
             </Title>
             <div className="text-center">
-              <Image
-               src={scan.image.startsWith('http') ? scan.image : apiService.getImageUrl(scan.image)}
-                alt={`${scan.scan_type_display} Scan`}
-                className="rounded-lg"
-                preview={false}
-                style={{ 
-                  maxWidth: '100%',
-                  maxHeight: '400px',
-                  objectFit: 'contain'
-                }}
-                placeholder={
-                  <div 
-                    className="flex items-center justify-center"
-                    style={{ 
-                      height: '200px', 
-                      backgroundColor: '#2a2a2a',
-                      border: '1px solid #404040',
-                      borderRadius: '8px'
+              {scan.report_file ? (
+                <div
+                  className="flex flex-col items-center justify-center p-8"
+                  style={{
+                    backgroundColor: '#2a2a2a',
+                    border: '1px solid #404040',
+                    borderRadius: '8px',
+                    minHeight: '300px'
+                  }}
+                >
+                  <FileText className="w-24 h-24 mb-4" style={{ color: '#F59E0B' }} />
+                  <Text style={{ color: '#F7F7F7', fontSize: '16px', marginBottom: 16 }}>
+                    PDF Report Available
+                  </Text>
+                  <Button
+                    type="primary"
+                    size="large"
+                    icon={<Download className="w-4 h-4" />}
+                    onClick={() => window.open(scan.report_file, '_blank')}
+                    style={{
+                      backgroundColor: '#00B58E',
+                      borderColor: '#00B58E',
                     }}
                   >
-                    <Spin size="large" />
-                  </div>
-                }
-              />
+                    View Report
+                  </Button>
+                </div>
+              ) : scan.image ? (
+                <Image
+                  src={scan.image.startsWith('http') ? scan.image : apiService.getImageUrl(scan.image)}
+                  alt={`${scan.scan_type_display} Scan`}
+                  className="rounded-lg"
+                  preview={false}
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '400px',
+                    objectFit: 'contain'
+                  }}
+                  placeholder={
+                    <div
+                      className="flex items-center justify-center"
+                      style={{
+                        height: '200px',
+                        backgroundColor: '#2a2a2a',
+                        border: '1px solid #404040',
+                        borderRadius: '8px'
+                      }}
+                    >
+                      <Spin size="large" />
+                    </div>
+                  }
+                />
+              ) : (
+                <div
+                  className="flex items-center justify-center"
+                  style={{
+                    height: '300px',
+                    backgroundColor: '#2a2a2a',
+                    border: '1px solid #404040',
+                    borderRadius: '8px'
+                  }}
+                >
+                  <Text style={{ color: '#9CA3AF' }}>No file available</Text>
+                </div>
+              )}
             </div>
           </Card>
         </Col>
