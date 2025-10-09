@@ -54,18 +54,31 @@ const Sidebar: React.FC<SidebarProps> = ({
       {/* Sidebar Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
         {!collapsed && (
-          <h2 className="text-lg font-semibold text-white">Healthcare</h2>
+          <div className="flex items-center space-x-3">
+            <img
+              src="/QQ Health Logo-01 1.png"
+              alt="QQ Health Logo"
+              className="h-8 w-auto"
+            />
+          </div>
         )}
-        <button
-          onClick={() => onCollapse(!collapsed)}
-          className="p-1 rounded-lg hover:bg-gray-800 text-gray-400 hover:text-white transition-colors"
-        >
-          {collapsed ? (
-            <ChevronRight className="w-4 h-4" />
-          ) : (
+        {collapsed && (
+          <div className="flex items-center justify-center w-full">
+            <img
+              src="/QQ Health Logo-01 1.png"
+              alt="QQ Health Logo"
+              className="h-8 w-auto"
+            />
+          </div>
+        )}
+        {!collapsed && (
+          <button
+            onClick={() => onCollapse(!collapsed)}
+            className="p-1 rounded-lg hover:bg-gray-800 text-gray-400 hover:text-white transition-colors"
+          >
             <ChevronLeft className="w-4 h-4" />
-          )}
-        </button>
+          </button>
+        )}
       </div>
 
       {/* Menu */}

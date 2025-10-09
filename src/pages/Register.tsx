@@ -91,11 +91,12 @@ const Register: React.FC = () => {
           }}
         >
           <div className="text-center mb-8">
-            <div 
-              className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-              style={{ backgroundColor: '#00B58E' }}
-            >
-              <UserPlus className="w-8 h-8 text-white" />
+            <div className="flex items-center justify-center mb-6">
+              <img
+                src="/QQ Health Logo-01 1.png"
+                alt="QQ Health Logo"
+                className="h-16 w-auto"
+              />
             </div>
             <Title level={2} style={{ color: '#46454D', marginBottom: 8 }}>
               Create Account
