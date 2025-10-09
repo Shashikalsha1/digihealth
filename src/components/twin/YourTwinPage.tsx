@@ -1690,253 +1690,266 @@ const YourTwinPage: React.FC = () => {
       </Row>
   );
 
-  const HistoryView = () => (
-    <Card
-      className="shadow-lg rounded-xl border-0"
-      style={{
-        backgroundColor: '#1F2937',
-        border: '1px solid #374151'
-      }}
-    >
-      <div className="flex items-center justify-between mb-6">
-        <Title level={3} style={{ color: '#F7F7F7', marginBottom: 0 }}>
-          Historical Data
-        </Title>
-        <Select
-          value={timeRange}
-          onChange={(value) => setTimeRange(value)}
-          style={{ width: 150 }}
-          options={[
-            { value: '7days', label: 'Last 7 Days' },
-            { value: '1month', label: 'Last 30 Days' }
-          ]}
-        />
-      </div>
+  const HistoryView = () => {
+    const menuItems = [
+      {
+        key: 'heart_rate',
+        icon: <Heart className="w-5 h-5" />,
+        label: 'Heart Rate'
+      },
+      {
+        key: 'blood_pressure',
+        icon: <TrendingUp className="w-5 h-5" />,
+        label: 'Blood Pressure'
+      },
+      {
+        key: 'temperature',
+        icon: <Thermometer className="w-5 h-5" />,
+        label: 'Temperature'
+      },
+      {
+        key: 'oxygen',
+        icon: <Droplets className="w-5 h-5" />,
+        label: 'Oxygen Level'
+      },
+      {
+        key: 'steps',
+        icon: <Footprints className="w-5 h-5" />,
+        label: 'Steps'
+      },
+      {
+        key: 'sleep',
+        icon: <Moon className="w-5 h-5" />,
+        label: 'Sleep'
+      }
+    ];
 
-      <Tabs
-        activeKey={activeTabKey}
-        onChange={(key) => setActiveTabKey(key)}
-        type="card"
-        className="mt-6"
-        items={[
-            {
-              key: 'heart_rate',
-              label: (
-                <span className="flex items-center space-x-2">
-                  <Heart className="w-4 h-4" />
-                  <span>Heart Rate</span>
-                </span>
-              ),
-              children: (
-                <div className="mt-6">
-                  <HeartRateChart
-                    data={getHistoricalData('heart_rate')}
-                    unit="bpm"
-                  />
-                </div>
-              )
-            },
-            {
-              key: 'blood_pressure',
-              label: (
-                <span className="flex items-center space-x-2">
-                  <TrendingUp className="w-4 h-4" />
-                  <span>Blood Pressure</span>
-                </span>
-              ),
-              children: (
-                <div className="space-y-6 mt-6">
-                  <div
-                    className="flex items-center justify-center"
-                    onMouseDown={(e) => e.stopPropagation()}
-                    onClick={(e) => e.stopPropagation()}
+    const renderContent = () => {
+      switch (activeTabKey) {
+        case 'heart_rate':
+          return (
+            <HeartRateChart
+              data={getHistoricalData('heart_rate')}
+              unit="bpm"
+            />
+          );
+        case 'blood_pressure':
+          return (
+            <div className="space-y-6">
+              <div className="flex items-center justify-center">
+                <Radio.Group
+                  value={bpType}
+                  onChange={(e) => setBpType(e.target.value)}
+                  buttonStyle="solid"
+                  size="large"
+                >
+                  <Radio.Button
+                    value="sys"
+                    style={{
+                      backgroundColor: bpType === 'sys' ? '#F59E0B' : '#374151',
+                      borderColor: bpType === 'sys' ? '#F59E0B' : '#4B5563',
+                      color: '#F7F7F7'
+                    }}
                   >
-                    <Radio.Group
-                      value={bpType}
-                      onChange={(e) => {
-                        setBpType(e.target.value);
-                      }}
-                      buttonStyle="solid"
-                      size="large"
-                      onClick={(e) => e.stopPropagation()}
-                      onMouseDown={(e) => e.stopPropagation()}
-                    >
-                      <Radio.Button
-                        value="sys"
-                        style={{
-                          backgroundColor: bpType === 'sys' ? '#F59E0B' : '#374151',
-                          borderColor: bpType === 'sys' ? '#F59E0B' : '#4B5563',
-                          color: '#F7F7F7'
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
-                        }}
-                        onMouseDown={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        Systolic
-                      </Radio.Button>
-                      <Radio.Button
-                        value="dia"
-                        style={{
-                          backgroundColor: bpType === 'dia' ? '#10B981' : '#374151',
-                          borderColor: bpType === 'dia' ? '#10B981' : '#4B5563',
-                          color: '#F7F7F7'
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
-                        }}
-                        onMouseDown={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        Diastolic
-                      </Radio.Button>
-                    </Radio.Group>
-                  </div>
-
-                  {bpType === 'sys' ? (
-                    <GenericChart
-                      data={getHistoricalData('blood_pressure_sys')}
-                      unit="mmHg"
-                      title="Systolic Blood Pressure"
-                      color="#F59E0B"
-                      zones={[
-                        { label: 'Low', range: '<90', color: '#3B82F6', min: 0, max: 90 },
-                        { label: 'Normal', range: '90-130', color: '#10B981', min: 90, max: 130 },
+                    Systolic
+                  </Radio.Button>
+                  <Radio.Button
+                    value="dia"
+                    style={{
+                      backgroundColor: bpType === 'dia' ? '#10B981' : '#374151',
+                      borderColor: bpType === 'dia' ? '#10B981' : '#4B5563',
+                      color: '#F7F7F7'
+                    }}
+                  >
+                    Diastolic
+                  </Radio.Button>
+                </Radio.Group>
+              </div>
+              <GenericChart
+                data={getHistoricalData(bpType === 'sys' ? 'blood_pressure_sys' : 'blood_pressure_dia')}
+                unit="mmHg"
+                title={bpType === 'sys' ? 'Blood Pressure (Systolic)' : 'Blood Pressure (Diastolic)'}
+                color={bpType === 'sys' ? '#F59E0B' : '#10B981'}
+                zones={
+                  bpType === 'sys'
+                    ? [
+                        { label: 'Low', range: '<110', color: '#3B82F6', min: 0, max: 110 },
+                        { label: 'Normal', range: '110-130', color: '#10B981', min: 110, max: 130 },
                         { label: 'Elevated', range: '130-145', color: '#F59E0B', min: 130, max: 145 },
                         { label: 'High', range: '>145', color: '#EF4444', min: 145, max: 200 }
-                      ]}
-                      showZoneDistribution={true}
-                    />
-                  ) : (
-                    <GenericChart
-                      data={getHistoricalData('blood_pressure_dia')}
-                      unit="mmHg"
-                      title="Diastolic Blood Pressure"
-                      color="#10B981"
-                      zones={[
-                        { label: 'Low', range: '<60', color: '#3B82F6', min: 0, max: 60 },
-                        { label: 'Normal', range: '60-85', color: '#10B981', min: 60, max: 85 },
+                      ]
+                    : [
+                        { label: 'Low', range: '<70', color: '#3B82F6', min: 0, max: 70 },
+                        { label: 'Normal', range: '70-85', color: '#10B981', min: 70, max: 85 },
                         { label: 'Elevated', range: '85-95', color: '#F59E0B', min: 85, max: 95 },
-                        { label: 'High', range: '>95', color: '#EF4444', min: 95, max: 150 }
-                      ]}
-                      showZoneDistribution={true}
-                    />
-                  )}
+                        { label: 'High', range: '>95', color: '#EF4444', min: 95, max: 130 }
+                      ]
+                }
+                showZoneDistribution={true}
+              />
+            </div>
+          );
+        case 'temperature':
+          return (
+            <GenericChart
+              data={getHistoricalData('temperature')}
+              unit="°C"
+              title="Body Temperature"
+              color="#F59E0B"
+              zones={[
+                { label: 'Low', range: '<36.5', color: '#3B82F6', min: 35, max: 36.5 },
+                { label: 'Normal', range: '36.5-37.2', color: '#10B981', min: 36.5, max: 37.2 },
+                { label: 'Elevated', range: '37.2-37.8', color: '#F59E0B', min: 37.2, max: 37.8 },
+                { label: 'Fever', range: '>37.8', color: '#EF4444', min: 37.8, max: 40 }
+              ]}
+              showZoneDistribution={true}
+            />
+          );
+        case 'oxygen':
+          return (
+            <GenericChart
+              data={getHistoricalData('oxygen_level')}
+              unit="%"
+              title="Blood Oxygen Level"
+              color="#10B981"
+              zones={[
+                { label: 'Low', range: '<95', color: '#EF4444', min: 85, max: 95 },
+                { label: 'Normal', range: '95-98', color: '#10B981', min: 95, max: 98 },
+                { label: 'Optimal', range: '98-100', color: '#00B58E', min: 98, max: 100 }
+              ]}
+              showZoneDistribution={true}
+            />
+          );
+        case 'steps':
+          return (
+            <GenericChart
+              data={getHistoricalData('steps')}
+              unit="steps"
+              title="Daily Steps"
+              color="#1D459A"
+              zones={[
+                { label: 'Sedentary', range: '<5000', color: '#EF4444', min: 0, max: 5000 },
+                { label: 'Low Active', range: '5000-8000', color: '#F59E0B', min: 5000, max: 8000 },
+                { label: 'Active', range: '8000-12000', color: '#10B981', min: 8000, max: 12000 },
+                { label: 'Highly Active', range: '>12000', color: '#00B58E', min: 12000, max: 25000 }
+              ]}
+              showZoneDistribution={true}
+            />
+          );
+        case 'sleep':
+          return (
+            <GenericChart
+              data={getHistoricalData('sleep_hours')}
+              unit="hours"
+              title="Sleep Duration"
+              color="#8B5CF6"
+              zones={[
+                { label: 'Insufficient', range: '<6', color: '#EF4444', min: 0, max: 6 },
+                { label: 'Adequate', range: '6-8', color: '#10B981', min: 6, max: 8 },
+                { label: 'Optimal', range: '8-9', color: '#00B58E', min: 8, max: 9 },
+                { label: 'Excessive', range: '>9', color: '#F59E0B', min: 9, max: 12 }
+              ]}
+              showZoneDistribution={true}
+            />
+          );
+        default:
+          return null;
+      }
+    };
+
+    return (
+      <div className="flex" style={{ minHeight: '600px', gap: '24px' }}>
+        <Card
+          className="shadow-lg rounded-xl border-0"
+          style={{
+            backgroundColor: '#1F2937',
+            border: '1px solid #374151',
+            width: '280px',
+            flexShrink: 0
+          }}
+        >
+          <div className="mb-4">
+            <Title level={5} style={{ color: '#F7F7F7', marginBottom: 4 }}>
+              Metrics
+            </Title>
+            <Text style={{ color: '#9CA3AF', fontSize: '12px' }}>
+              Select a metric to view
+            </Text>
+          </div>
+
+          <div className="space-y-2">
+            {menuItems.map((item) => (
+              <div
+                key={item.key}
+                onClick={() => setActiveTabKey(item.key)}
+                className="cursor-pointer transition-all duration-200"
+                style={{
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  backgroundColor: activeTabKey === item.key ? '#00B58E' : 'transparent',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  border: activeTabKey === item.key ? '1px solid #00B58E' : '1px solid transparent'
+                }}
+                onMouseEnter={(e) => {
+                  if (activeTabKey !== item.key) {
+                    e.currentTarget.style.backgroundColor = '#374151';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (activeTabKey !== item.key) {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }
+                }}
+              >
+                <div style={{ color: activeTabKey === item.key ? '#FFFFFF' : '#9CA3AF' }}>
+                  {item.icon}
                 </div>
-              )
-            },
-            {
-              key: 'temperature',
-              label: (
-                <span className="flex items-center space-x-2">
-                  <Thermometer className="w-4 h-4" />
-                  <span>Temperature</span>
-                </span>
-              ),
-              children: (
-                <div className="mt-6">
-                  <GenericChart
-                    data={getHistoricalData('temperature')}
-                    unit="°C"
-                    title="Body Temperature"
-                    color="#EF4444"
-                    zones={[
-                      { label: 'Low', range: '<36.5', color: '#3B82F6', min: 35, max: 36.5 },
-                      { label: 'Normal', range: '36.5-37.2', color: '#10B981', min: 36.5, max: 37.2 },
-                      { label: 'Elevated', range: '37.2-37.8', color: '#F59E0B', min: 37.2, max: 37.8 },
-                      { label: 'Fever', range: '>37.8', color: '#EF4444', min: 37.8, max: 40 }
-                    ]}
-                    showZoneDistribution={true}
-                  />
-                </div>
-              )
-            },
-            {
-              key: 'oxygen',
-              label: (
-                <span className="flex items-center space-x-2">
-                  <Droplets className="w-4 h-4" />
-                  <span>Oxygen Level</span>
-                </span>
-              ),
-              children: (
-                <div className="mt-6">
-                  <GenericChart
-                    data={getHistoricalData('oxygen_level')}
-                    unit="%"
-                    title="Blood Oxygen Level"
-                    color="#10B981"
-                    zones={[
-                      { label: 'Low', range: '<95', color: '#EF4444', min: 90, max: 95 },
-                      { label: 'Normal', range: '95-98', color: '#10B981', min: 95, max: 98 },
-                      { label: 'Optimal', range: '98-100', color: '#00B58E', min: 98, max: 101 }
-                    ]}
-                    showZoneDistribution={true}
-                  />
-                </div>
-              )
-            },
-            {
-              key: 'steps',
-              label: (
-                <span className="flex items-center space-x-2">
-                  <Footprints className="w-4 h-4" />
-                  <span>Steps</span>
-                </span>
-              ),
-              children: (
-                <div className="mt-6">
-                  <GenericChart
-                    data={getHistoricalData('steps')}
-                    unit="steps"
-                    title="Daily Steps"
-                    color="#1D459A"
-                    zones={[
-                      { label: 'Sedentary', range: '<5000', color: '#EF4444', min: 0, max: 5000 },
-                      { label: 'Low Active', range: '5000-8000', color: '#F59E0B', min: 5000, max: 8000 },
-                      { label: 'Active', range: '8000-12000', color: '#10B981', min: 8000, max: 12000 },
-                      { label: 'Highly Active', range: '>12000', color: '#00B58E', min: 12000, max: 25000 }
-                    ]}
-                    showZoneDistribution={true}
-                  />
-                </div>
-              )
-            },
-            {
-              key: 'sleep',
-              label: (
-                <span className="flex items-center space-x-2">
-                  <Moon className="w-4 h-4" />
-                  <span>Sleep</span>
-                </span>
-              ),
-              children: (
-                <div className="mt-6">
-                  <GenericChart
-                    data={getHistoricalData('sleep_hours')}
-                    unit="hours"
-                    title="Sleep Duration"
-                    color="#8B5CF6"
-                    zones={[
-                      { label: 'Insufficient', range: '<6', color: '#EF4444', min: 0, max: 6 },
-                      { label: 'Adequate', range: '6-8', color: '#10B981', min: 6, max: 8 },
-                      { label: 'Optimal', range: '8-9', color: '#00B58E', min: 8, max: 9 },
-                      { label: 'Excessive', range: '>9', color: '#F59E0B', min: 9, max: 12 }
-                    ]}
-                    showZoneDistribution={true}
-                  />
-                </div>
-              )
-            }
-        ]}
-      />
-    </Card>
-  );
+                <Text
+                  style={{
+                    color: activeTabKey === item.key ? '#FFFFFF' : '#F7F7F7',
+                    fontWeight: activeTabKey === item.key ? 600 : 400,
+                    fontSize: '14px'
+                  }}
+                >
+                  {item.label}
+                </Text>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card
+          className="shadow-lg rounded-xl border-0"
+          style={{
+            backgroundColor: '#1F2937',
+            border: '1px solid #374151',
+            flex: 1
+          }}
+        >
+          <div className="flex items-center justify-between mb-6">
+            <Title level={4} style={{ color: '#F7F7F7', marginBottom: 0 }}>
+              {menuItems.find(item => item.key === activeTabKey)?.label}
+            </Title>
+            <Select
+              value={timeRange}
+              onChange={(value) => setTimeRange(value)}
+              style={{ width: 150 }}
+              options={[
+                { value: '7days', label: 'Last 7 Days' },
+                { value: '1month', label: 'Last 30 Days' }
+              ]}
+            />
+          </div>
+
+          <div>
+            {renderContent()}
+          </div>
+        </Card>
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-6">
