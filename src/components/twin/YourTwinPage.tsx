@@ -111,7 +111,10 @@ const YourTwinPage: React.FC = () => {
     return pool[randomIndex];
   };
 
-  const getDisplayValue = (value: number | null, parameter: string): number => {
+  const getDisplayValue = (value: number | null, parameter: string, hasLoaded: boolean): number | string => {
+    if (!hasLoaded) {
+      return 'Loading...';
+    }
     return value !== null ? value : getMockValue(parameter);
   };
 
@@ -1525,21 +1528,32 @@ const YourTwinPage: React.FC = () => {
                     border: '1px solid #374151'
                   }}
                 >
-                  <Statistic
-                    title={<span style={{ color: '#9CA3AF' }}>Heart Rate</span>}
-                    value={getDisplayValue(healthData?.heart_rate || null, 'heart_rate')}
-                    suffix="bpm"
-                    valueStyle={{
-                      color: getHealthStatus(getDisplayValue(healthData?.heart_rate || null, 'heart_rate'), 'heart_rate').color
-                    }}
-                    prefix={<Heart className="w-4 h-4" style={{ color: '#EF4444' }} />}
-                  />
-                  <Text style={{
-                    color: getHealthStatus(getDisplayValue(healthData?.heart_rate || null, 'heart_rate'), 'heart_rate').color,
-                    fontSize: '12px'
-                  }}>
-                    {getHealthStatus(getDisplayValue(healthData?.heart_rate || null, 'heart_rate'), 'heart_rate').status}
-                  </Text>
+                  {healthData ? (
+                    <>
+                      <Statistic
+                        title={<span style={{ color: '#9CA3AF' }}>Heart Rate</span>}
+                        value={getDisplayValue(healthData.heart_rate, 'heart_rate', true)}
+                        suffix="bpm"
+                        valueStyle={{
+                          color: getHealthStatus(getDisplayValue(healthData.heart_rate, 'heart_rate', true) as number, 'heart_rate').color
+                        }}
+                        prefix={<Heart className="w-4 h-4" style={{ color: '#EF4444' }} />}
+                      />
+                      <Text style={{
+                        color: getHealthStatus(getDisplayValue(healthData.heart_rate, 'heart_rate', true) as number, 'heart_rate').color,
+                        fontSize: '12px'
+                      }}>
+                        {getHealthStatus(getDisplayValue(healthData.heart_rate, 'heart_rate', true) as number, 'heart_rate').status}
+                      </Text>
+                    </>
+                  ) : (
+                    <Statistic
+                      title={<span style={{ color: '#9CA3AF' }}>Heart Rate</span>}
+                      value="Loading..."
+                      valueStyle={{ color: '#9CA3AF' }}
+                      prefix={<Heart className="w-4 h-4" style={{ color: '#EF4444' }} />}
+                    />
+                  )}
                 </Card>
               </Col>
 
@@ -1552,21 +1566,32 @@ const YourTwinPage: React.FC = () => {
                     border: '1px solid #374151'
                   }}
                 >
-                  <Statistic
-                    title={<span style={{ color: '#9CA3AF' }}>Blood Pressure</span>}
-                    value={`${getDisplayValue(healthData?.blood_pressure_sys || null, 'blood_pressure_sys')}/${getDisplayValue(healthData?.blood_pressure_dia || null, 'blood_pressure_dia')}`}
-                    suffix="mmHg"
-                    valueStyle={{
-                      color: getHealthStatus(getDisplayValue(healthData?.blood_pressure_sys || null, 'blood_pressure_sys'), 'blood_pressure_sys').color
-                    }}
-                    prefix={<TrendingUp className="w-4 h-4" style={{ color: '#F59E0B' }} />}
-                  />
-                  <Text style={{
-                    color: getHealthStatus(getDisplayValue(healthData?.blood_pressure_sys || null, 'blood_pressure_sys'), 'blood_pressure_sys').color,
-                    fontSize: '12px'
-                  }}>
-                    {getHealthStatus(getDisplayValue(healthData?.blood_pressure_sys || null, 'blood_pressure_sys'), 'blood_pressure_sys').status}
-                  </Text>
+                  {healthData ? (
+                    <>
+                      <Statistic
+                        title={<span style={{ color: '#9CA3AF' }}>Blood Pressure</span>}
+                        value={`${getDisplayValue(healthData.blood_pressure_sys, 'blood_pressure_sys', true)}/${getDisplayValue(healthData.blood_pressure_dia, 'blood_pressure_dia', true)}`}
+                        suffix="mmHg"
+                        valueStyle={{
+                          color: getHealthStatus(getDisplayValue(healthData.blood_pressure_sys, 'blood_pressure_sys', true) as number, 'blood_pressure_sys').color
+                        }}
+                        prefix={<TrendingUp className="w-4 h-4" style={{ color: '#F59E0B' }} />}
+                      />
+                      <Text style={{
+                        color: getHealthStatus(getDisplayValue(healthData.blood_pressure_sys, 'blood_pressure_sys', true) as number, 'blood_pressure_sys').color,
+                        fontSize: '12px'
+                      }}>
+                        {getHealthStatus(getDisplayValue(healthData.blood_pressure_sys, 'blood_pressure_sys', true) as number, 'blood_pressure_sys').status}
+                      </Text>
+                    </>
+                  ) : (
+                    <Statistic
+                      title={<span style={{ color: '#9CA3AF' }}>Blood Pressure</span>}
+                      value="Loading..."
+                      valueStyle={{ color: '#9CA3AF' }}
+                      prefix={<TrendingUp className="w-4 h-4" style={{ color: '#F59E0B' }} />}
+                    />
+                  )}
                 </Card>
               </Col>
 
@@ -1579,22 +1604,33 @@ const YourTwinPage: React.FC = () => {
                     border: '1px solid #374151'
                   }}
                 >
-                  <Statistic
-                    title={<span style={{ color: '#9CA3AF' }}>Temperature</span>}
-                    value={getDisplayValue(healthData?.temperature || null, 'temperature')}
-                    suffix="°C"
-                    precision={1}
-                    valueStyle={{
-                      color: getHealthStatus(getDisplayValue(healthData?.temperature || null, 'temperature'), 'temperature').color
-                    }}
-                    prefix={<Thermometer className="w-4 h-4" style={{ color: '#EF4444' }} />}
-                  />
-                  <Text style={{
-                    color: getHealthStatus(getDisplayValue(healthData?.temperature || null, 'temperature'), 'temperature').color,
-                    fontSize: '12px'
-                  }}>
-                    {getHealthStatus(getDisplayValue(healthData?.temperature || null, 'temperature'), 'temperature').status}
-                  </Text>
+                  {healthData ? (
+                    <>
+                      <Statistic
+                        title={<span style={{ color: '#9CA3AF' }}>Temperature</span>}
+                        value={getDisplayValue(healthData.temperature, 'temperature', true)}
+                        suffix="°C"
+                        precision={1}
+                        valueStyle={{
+                          color: getHealthStatus(getDisplayValue(healthData.temperature, 'temperature', true) as number, 'temperature').color
+                        }}
+                        prefix={<Thermometer className="w-4 h-4" style={{ color: '#EF4444' }} />}
+                      />
+                      <Text style={{
+                        color: getHealthStatus(getDisplayValue(healthData.temperature, 'temperature', true) as number, 'temperature').color,
+                        fontSize: '12px'
+                      }}>
+                        {getHealthStatus(getDisplayValue(healthData.temperature, 'temperature', true) as number, 'temperature').status}
+                      </Text>
+                    </>
+                  ) : (
+                    <Statistic
+                      title={<span style={{ color: '#9CA3AF' }}>Temperature</span>}
+                      value="Loading..."
+                      valueStyle={{ color: '#9CA3AF' }}
+                      prefix={<Thermometer className="w-4 h-4" style={{ color: '#EF4444' }} />}
+                    />
+                  )}
                 </Card>
               </Col>
 
@@ -1607,21 +1643,32 @@ const YourTwinPage: React.FC = () => {
                     border: '1px solid #374151'
                   }}
                 >
-                  <Statistic
-                    title={<span style={{ color: '#9CA3AF' }}>Oxygen Level</span>}
-                    value={getDisplayValue(healthData?.oxygen_level || null, 'oxygen_level')}
-                    suffix="%"
-                    valueStyle={{
-                      color: getHealthStatus(getDisplayValue(healthData?.oxygen_level || null, 'oxygen_level'), 'oxygen_level').color
-                    }}
-                    prefix={<Droplets className="w-4 h-4" style={{ color: '#10B981' }} />}
-                  />
-                  <Text style={{
-                    color: getHealthStatus(getDisplayValue(healthData?.oxygen_level || null, 'oxygen_level'), 'oxygen_level').color,
-                    fontSize: '12px'
-                  }}>
-                    {getHealthStatus(getDisplayValue(healthData?.oxygen_level || null, 'oxygen_level'), 'oxygen_level').status}
-                  </Text>
+                  {healthData ? (
+                    <>
+                      <Statistic
+                        title={<span style={{ color: '#9CA3AF' }}>Oxygen Level</span>}
+                        value={getDisplayValue(healthData.oxygen_level, 'oxygen_level', true)}
+                        suffix="%"
+                        valueStyle={{
+                          color: getHealthStatus(getDisplayValue(healthData.oxygen_level, 'oxygen_level', true) as number, 'oxygen_level').color
+                        }}
+                        prefix={<Droplets className="w-4 h-4" style={{ color: '#10B981' }} />}
+                      />
+                      <Text style={{
+                        color: getHealthStatus(getDisplayValue(healthData.oxygen_level, 'oxygen_level', true) as number, 'oxygen_level').color,
+                        fontSize: '12px'
+                      }}>
+                        {getHealthStatus(getDisplayValue(healthData.oxygen_level, 'oxygen_level', true) as number, 'oxygen_level').status}
+                      </Text>
+                    </>
+                  ) : (
+                    <Statistic
+                      title={<span style={{ color: '#9CA3AF' }}>Oxygen Level</span>}
+                      value="Loading..."
+                      valueStyle={{ color: '#9CA3AF' }}
+                      prefix={<Droplets className="w-4 h-4" style={{ color: '#10B981' }} />}
+                    />
+                  )}
                 </Card>
               </Col>
 
@@ -1636,8 +1683,8 @@ const YourTwinPage: React.FC = () => {
                 >
                   <Statistic
                     title={<span style={{ color: '#9CA3AF' }}>Steps Today</span>}
-                    value={getDisplayValue(healthData?.steps || null, 'steps')}
-                    suffix="steps"
+                    value={healthData ? getDisplayValue(healthData.steps, 'steps', true) : 'Loading...'}
+                    suffix={healthData ? 'steps' : ''}
                     valueStyle={{ color: '#1D459A' }}
                     prefix={<Footprints className="w-4 h-4" style={{ color: '#1D459A' }} />}
                   />
@@ -1655,9 +1702,9 @@ const YourTwinPage: React.FC = () => {
                 >
                   <Statistic
                     title={<span style={{ color: '#9CA3AF' }}>Sleep Hours</span>}
-                    value={getDisplayValue(healthData?.sleep_hours || null, 'sleep_hours')}
-                    suffix="hrs"
-                    precision={1}
+                    value={healthData ? getDisplayValue(healthData.sleep_hours, 'sleep_hours', true) : 'Loading...'}
+                    suffix={healthData ? 'hrs' : ''}
+                    precision={healthData ? 1 : 0}
                     valueStyle={{ color: '#8B5CF6' }}
                     prefix={<Moon className="w-4 h-4" style={{ color: '#8B5CF6' }} />}
                   />
