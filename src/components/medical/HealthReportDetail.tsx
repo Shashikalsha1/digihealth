@@ -21,7 +21,10 @@ import {
   CheckCircle,
   AlertCircle,
   FileText,
-  Download
+  Download,
+  Sparkles,
+  Brain,
+  Stethoscope
 } from 'lucide-react';
 import apiService from '../../services/apiService';
 import type { MedicalScanResponse } from '../../services/apiService';
@@ -98,23 +101,58 @@ const HealthReportDetail: React.FC<HealthReportDetailProps> = ({ scanId, onBack 
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center space-x-4">
+      {/* Enhanced Header */}
+      <div
+        className="rounded-2xl p-6 shadow-lg"
+        style={{
+          background: 'linear-gradient(135deg, #1F2937 0%, #111827 100%)',
+          border: '1px solid #374151',
+        }}
+      >
         <Button
           type="text"
           icon={<ArrowLeft className="w-4 h-4" />}
           onClick={onBack}
-          style={{ color: '#9CA3AF' }}
+          style={{ color: '#9CA3AF', marginBottom: '16px' }}
         >
           Back to Reports
         </Button>
-        <div>
-          <Title level={3} style={{ color: '#F7F7F7', marginBottom: 4 }}>
-            Medical Scan #{scan.id}
-          </Title>
-          <Text style={{ color: '#9CA3AF' }}>
-            Detailed analysis and diagnosis
-          </Text>
+        <div className="flex items-start justify-between">
+          <div className="flex items-start space-x-4">
+            <div
+              className="p-3 rounded-xl"
+              style={{
+                backgroundColor: 'rgba(0, 181, 142, 0.1)',
+                border: '1px solid rgba(0, 181, 142, 0.3)',
+              }}
+            >
+              <Sparkles className="w-8 h-8" style={{ color: '#00B58E' }} />
+            </div>
+            <div>
+              <div className="flex items-center space-x-3 mb-2">
+                <Title level={2} style={{ color: '#F7F7F7', marginBottom: 0 }}>
+                  Medical Scan #{scan.id}
+                </Title>
+              </div>
+              <Text style={{ color: '#9CA3AF', fontSize: '15px' }}>
+                AI-powered detailed analysis and diagnosis
+              </Text>
+              <div className="flex items-center space-x-4 mt-3">
+                <div className="flex items-center space-x-2">
+                  <User className="w-4 h-4" style={{ color: '#6B7280' }} />
+                  <Text style={{ color: '#9CA3AF', fontSize: '14px' }}>
+                    {scan.patient_name}
+                  </Text>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Calendar className="w-4 h-4" style={{ color: '#6B7280' }} />
+                  <Text style={{ color: '#9CA3AF', fontSize: '14px' }}>
+                    {formatDate(scan.upload_date)}
+                  </Text>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -130,54 +168,45 @@ const HealthReportDetail: React.FC<HealthReportDetailProps> = ({ scanId, onBack 
           >
             {/* Scan Information Header */}
             <div className="mb-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                  <Tag
-                    color={
+              <div className="flex items-center space-x-3 mb-6">
+                <div
+                  className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl"
+                  style={{
+                    backgroundColor:
+                      scan.scan_type === 'XRAY' ? 'rgba(0, 181, 142, 0.1)' :
+                      scan.scan_type === 'REPORT' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(29, 69, 154, 0.1)',
+                    border:
+                      scan.scan_type === 'XRAY' ? '1px solid rgba(0, 181, 142, 0.3)' :
+                      scan.scan_type === 'REPORT' ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid rgba(29, 69, 154, 0.3)',
+                  }}
+                >
+                  {scan.scan_type === 'XRAY' ? <FileImage className="w-5 h-5" style={{ color: '#00B58E' }} /> :
+                   scan.scan_type === 'REPORT' ? <FileText className="w-5 h-5" style={{ color: '#F59E0B' }} /> :
+                   <Activity className="w-5 h-5" style={{ color: '#1D459A' }} />}
+                  <Text strong style={{
+                    color:
                       scan.scan_type === 'XRAY' ? '#00B58E' :
-                      scan.scan_type === 'REPORT' ? '#F59E0B' : '#1D459A'
-                    }
-                    icon={
-                      scan.scan_type === 'XRAY' ? <FileImage className="w-3 h-3" /> :
-                      scan.scan_type === 'REPORT' ? <FileText className="w-3 h-3" /> :
-                      <Activity className="w-3 h-3" />
-                    }
-                    className="text-sm px-3 py-1"
-                  >
+                      scan.scan_type === 'REPORT' ? '#F59E0B' : '#1D459A',
+                    fontSize: '15px'
+                  }}>
                     {scan.scan_type_display}
-                  </Tag>
-                  <div className="flex items-center space-x-2">
-                    {scan.is_analyzed ? (
-                      <>
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <Text style={{ color: '#10B981' }}>Analyzed</Text>
-                      </>
-                    ) : (
-                      <>
-                        <AlertCircle className="w-4 h-4 text-yellow-500" />
-                        <Text style={{ color: '#F59E0B' }}>Pending</Text>
-                      </>
-                    )}
-                  </div>
+                  </Text>
                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Text strong style={{ color: '#F7F7F7' }}>Patient:</Text>
-                  <br />
-                  <div className="flex items-center space-x-2 mt-1">
-                    <User className="w-4 h-4 text-gray-400" />
-                    <Text style={{ color: '#9CA3AF' }}>{scan.patient_name}</Text>
-                  </div>
-                </div>
-                <div>
-                  <Text strong style={{ color: '#F7F7F7' }}>Upload Date:</Text>
-                  <br />
-                  <div className="flex items-center space-x-2 mt-1">
-                    <Calendar className="w-4 h-4 text-gray-400" />
-                    <Text style={{ color: '#9CA3AF' }}>{formatDate(scan.upload_date)}</Text>
-                  </div>
+                <div
+                  className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl"
+                  style={{
+                    backgroundColor: scan.is_analyzed ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+                    border: scan.is_analyzed ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(245, 158, 11, 0.3)',
+                  }}
+                >
+                  {scan.is_analyzed ? (
+                    <CheckCircle className="w-5 h-5" style={{ color: '#10B981' }} />
+                  ) : (
+                    <AlertCircle className="w-5 h-5" style={{ color: '#F59E0B' }} />
+                  )}
+                  <Text strong style={{ color: scan.is_analyzed ? '#10B981' : '#F59E0B', fontSize: '15px' }}>
+                    {scan.is_analyzed ? 'Analyzed' : 'Pending'}
+                  </Text>
                 </div>
               </div>
             </div>
@@ -193,73 +222,117 @@ const HealthReportDetail: React.FC<HealthReportDetailProps> = ({ scanId, onBack 
                 {
                   key: 'primary',
                   label: (
-                    <span style={{ color: '#F7F7F7', fontWeight: 500 }}>
-                      AI Analysis
-                    </span>
+                    <div className="flex items-center space-x-2">
+                      <Brain className="w-4 h-4" />
+                      <span style={{ fontWeight: 500 }}>AI Analysis</span>
+                    </div>
                   ),
                   children: (
-                    <div 
-                      className="p-4 rounded-lg"
-                      style={{ backgroundColor: '#2a2a2a', border: '1px solid #404040' }}
+                    <div
+                      className="p-6 rounded-xl"
+                      style={{
+                        background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
+                        border: '1px solid #374151',
+                      }}
                     >
-                      <div className="mb-4">
-                        <Text strong style={{ color: '#00B58E', fontSize: '16px' }}>
-                          AI Analysis Report:
+                      <div className="flex items-center space-x-2 mb-5">
+                        <div
+                          className="p-2 rounded-lg"
+                          style={{
+                            backgroundColor: 'rgba(0, 181, 142, 0.1)',
+                            border: '1px solid rgba(0, 181, 142, 0.3)',
+                          }}
+                        >
+                          <Sparkles className="w-5 h-5" style={{ color: '#00B58E' }} />
+                        </div>
+                        <Text strong style={{ color: '#00B58E', fontSize: '17px' }}>
+                          AI Analysis Report
                         </Text>
                       </div>
-                      <Paragraph style={{ color: '#F7F7F7', marginBottom: 0 }}>
-                        <pre style={{ 
-                          whiteSpace: 'pre-wrap', 
+                      <div
+                        className="p-5 rounded-lg"
+                        style={{
+                          backgroundColor: '#1F2937',
+                          border: '1px solid #374151',
+                        }}
+                      >
+                        <pre style={{
+                          whiteSpace: 'pre-wrap',
                           fontFamily: 'inherit',
-                          color: '#F7F7F7',
+                          color: '#E5E7EB',
                           fontSize: '14px',
-                          lineHeight: '1.6'
+                          lineHeight: '1.8',
+                          margin: 0,
                         }}>
                           {getPrimaryAnalysis(scan)}
                         </pre>
-                      </Paragraph>
+                      </div>
                     </div>
                   ),
                 },
                 {
                   key: 'diagnosis',
                   label: (
-                    <span style={{ color: '#F7F7F7', fontWeight: 500 }}>
-                      Diagnosis
-                    </span>
+                    <div className="flex items-center space-x-2">
+                      <Stethoscope className="w-4 h-4" />
+                      <span style={{ fontWeight: 500 }}>Diagnosis</span>
+                    </div>
                   ),
                   children: (
-                    <div 
-                      className="p-4 rounded-lg"
-                      style={{ backgroundColor: '#2a2a2a', border: '1px solid #404040' }}
+                    <div
+                      className="p-6 rounded-xl"
+                      style={{
+                        background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
+                        border: '1px solid #374151',
+                      }}
                     >
-                      <div className="mb-4">
-                        <Text strong style={{ color: '#EF4444', fontSize: '16px' }}>
-                          Medical Diagnosis:
+                      <div className="flex items-center space-x-2 mb-5">
+                        <div
+                          className="p-2 rounded-lg"
+                          style={{
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            border: '1px solid rgba(239, 68, 68, 0.3)',
+                          }}
+                        >
+                          <Stethoscope className="w-5 h-5" style={{ color: '#EF4444' }} />
+                        </div>
+                        <Text strong style={{ color: '#EF4444', fontSize: '17px' }}>
+                          Medical Diagnosis
                         </Text>
                       </div>
                       <div
-                        className="p-4 rounded-lg mb-4"
-                        style={{ backgroundColor: '#1a1a1a', border: '1px solid #EF4444' }}
+                        className="p-5 rounded-xl mb-5"
+                        style={{
+                          background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(239, 68, 68, 0.02) 100%)',
+                          border: '1px solid rgba(239, 68, 68, 0.2)',
+                        }}
                       >
                         <pre style={{
                           whiteSpace: 'pre-wrap',
                           fontFamily: 'inherit',
                           color: '#F7F7F7',
-                          fontSize: '16px',
+                          fontSize: '15px',
                           fontWeight: 500,
                           margin: 0,
-                          lineHeight: '1.8'
+                          lineHeight: '1.9'
                         }}>
                           {getDiagnosis(scan)}
                         </pre>
                       </div>
-                      <div className="space-y-2">
-                        <Text strong style={{ color: '#F7F7F7' }}>AI Model Used:</Text>
-                        <br />
-                        <Text style={{ color: '#9CA3AF' }}>
-                          {scan.ai_analysis_report?.openai_analysis?.model_used || 'GPT-4o'}
-                        </Text>
+                      <div
+                        className="p-4 rounded-lg"
+                        style={{
+                          backgroundColor: '#1F2937',
+                          border: '1px solid #374151',
+                        }}
+                      >
+                        <div className="flex items-center space-x-2">
+                          <Brain className="w-4 h-4" style={{ color: '#6B7280' }} />
+                          <Text strong style={{ color: '#F7F7F7', fontSize: '14px' }}>AI Model:</Text>
+                          <Text style={{ color: '#9CA3AF', fontSize: '14px' }}>
+                            {scan.ai_analysis_report?.openai_analysis?.model_used || 'GPT-4o'}
+                          </Text>
+                        </div>
                       </div>
                     </div>
                   ),
@@ -280,78 +353,114 @@ const HealthReportDetail: React.FC<HealthReportDetailProps> = ({ scanId, onBack 
         {/* Right Column - Image or Report File */}
         <Col xs={24} lg={8}>
           <Card
-            className="shadow-lg rounded-xl border-0"
+            className="shadow-lg rounded-2xl border-0"
             style={{
-              backgroundColor: '#1F2937',
+              background: 'linear-gradient(135deg, #1F2937 0%, #111827 100%)',
               border: '1px solid #374151'
             }}
           >
-            <Title level={4} style={{ color: '#F7F7F7', marginBottom: 16 }}>
-              {scan.report_file ? 'Medical Report File' : 'Medical Image'}
-            </Title>
+            <div className="flex items-center space-x-2 mb-4">
+              {scan.report_file ? (
+                <FileText className="w-5 h-5" style={{ color: '#F59E0B' }} />
+              ) : (
+                <FileImage className="w-5 h-5" style={{ color: '#00B58E' }} />
+              )}
+              <Title level={4} style={{ color: '#F7F7F7', marginBottom: 0 }}>
+                {scan.report_file ? 'Medical Report' : 'Medical Image'}
+              </Title>
+            </div>
             <div className="text-center">
               {scan.report_file ? (
                 <div
-                  className="flex flex-col items-center justify-center p-8"
+                  className="flex flex-col items-center justify-center p-10 rounded-xl"
                   style={{
-                    backgroundColor: '#2a2a2a',
-                    border: '1px solid #404040',
-                    borderRadius: '8px',
-                    minHeight: '300px'
+                    background: 'linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%)',
+                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                    minHeight: '400px'
                   }}
                 >
-                  <FileText className="w-24 h-24 mb-4" style={{ color: '#F59E0B' }} />
-                  <Text style={{ color: '#F7F7F7', fontSize: '16px', marginBottom: 16 }}>
+                  <div
+                    className="p-6 rounded-2xl mb-6"
+                    style={{
+                      backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                      border: '1px solid rgba(245, 158, 11, 0.3)',
+                    }}
+                  >
+                    <FileText className="w-20 h-20" style={{ color: '#F59E0B' }} />
+                  </div>
+                  <Text strong style={{ color: '#F7F7F7', fontSize: '17px', marginBottom: 8 }}>
                     PDF Report Available
+                  </Text>
+                  <Text style={{ color: '#9CA3AF', fontSize: '14px', marginBottom: 24 }}>
+                    Click below to view or download
                   </Text>
                   <Button
                     type="primary"
                     size="large"
-                    icon={<Download className="w-4 h-4" />}
+                    icon={<Download className="w-5 h-5" />}
                     onClick={() => window.open(scan.report_file, '_blank')}
                     style={{
                       backgroundColor: '#00B58E',
                       borderColor: '#00B58E',
+                      height: '48px',
+                      fontSize: '15px',
+                      fontWeight: 500,
+                      boxShadow: '0 4px 12px rgba(0, 181, 142, 0.3)',
                     }}
                   >
-                    View Report
+                    View Full Report
                   </Button>
                 </div>
               ) : scan.image ? (
-                <Image
-                  src={scan.image.startsWith('http') ? scan.image : apiService.getImageUrl(scan.image)}
-                  alt={`${scan.scan_type_display} Scan`}
-                  className="rounded-lg"
-                  preview={false}
-                  style={{
-                    maxWidth: '100%',
-                    maxHeight: '400px',
-                    objectFit: 'contain'
-                  }}
-                  placeholder={
-                    <div
-                      className="flex items-center justify-center"
-                      style={{
-                        height: '200px',
-                        backgroundColor: '#2a2a2a',
-                        border: '1px solid #404040',
-                        borderRadius: '8px'
-                      }}
-                    >
-                      <Spin size="large" />
-                    </div>
-                  }
-                />
-              ) : (
                 <div
-                  className="flex items-center justify-center"
+                  className="rounded-xl overflow-hidden"
                   style={{
-                    height: '300px',
-                    backgroundColor: '#2a2a2a',
-                    border: '1px solid #404040',
-                    borderRadius: '8px'
+                    border: '1px solid #374151',
                   }}
                 >
+                  <Image
+                    src={scan.image.startsWith('http') ? scan.image : apiService.getImageUrl(scan.image)}
+                    alt={`${scan.scan_type_display} Scan`}
+                    className="rounded-xl"
+                    preview={{
+                      mask: (
+                        <div className="flex flex-col items-center space-y-2">
+                          <Eye className="w-6 h-6" />
+                          <span>View Full Size</span>
+                        </div>
+                      ),
+                    }}
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: '500px',
+                      objectFit: 'contain',
+                      backgroundColor: '#0f0f0f',
+                    }}
+                    placeholder={
+                      <div
+                        className="flex items-center justify-center"
+                        style={{
+                          height: '300px',
+                          backgroundColor: '#1a1a1a',
+                          border: '1px solid #374151',
+                          borderRadius: '12px'
+                        }}
+                      >
+                        <Spin size="large" />
+                      </div>
+                    }
+                  />
+                </div>
+              ) : (
+                <div
+                  className="flex flex-col items-center justify-center rounded-xl"
+                  style={{
+                    height: '400px',
+                    backgroundColor: '#1a1a1a',
+                    border: '1px solid #374151',
+                  }}
+                >
+                  <AlertCircle className="w-12 h-12 mb-3" style={{ color: '#6B7280' }} />
                   <Text style={{ color: '#9CA3AF' }}>No file available</Text>
                 </div>
               )}

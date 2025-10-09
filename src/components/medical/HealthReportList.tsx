@@ -20,7 +20,11 @@ import {
   Calendar,
   Eye,
   Upload as UploadIcon,
-  FileText
+  FileText,
+  Sparkles,
+  Clock,
+  CheckCircle2,
+  AlertCircle
 } from 'lucide-react';
 import type { ColumnsType } from 'antd/es/table';
 import type { UploadProps } from 'antd';
@@ -163,30 +167,55 @@ const HealthReportList: React.FC<HealthReportListProps> = ({ onViewDetail }) => 
       title: 'Scan ID',
       dataIndex: 'id',
       key: 'id',
-      width: 80,
-      render: (id) => <Text strong>#{id}</Text>,
+      width: 100,
+      render: (id) => (
+        <div
+          className="inline-flex items-center justify-center px-3 py-1 rounded-lg"
+          style={{
+            backgroundColor: '#374151',
+            border: '1px solid #4B5563',
+          }}
+        >
+          <Text strong style={{ color: '#F7F7F7', fontSize: '13px' }}>#{id}</Text>
+        </div>
+      ),
     },
     {
       title: 'Type',
       dataIndex: 'scan_type_display',
       key: 'scan_type',
-      width: 100,
+      width: 150,
       render: (type, record) => {
-        let color = '#00B58E';
-        let icon = <FileImage className="w-3 h-3" />;
+        let bgColor = 'rgba(0, 181, 142, 0.1)';
+        let borderColor = 'rgba(0, 181, 142, 0.3)';
+        let textColor = '#00B58E';
+        let icon = <FileImage className="w-4 h-4" />;
 
         if (record.scan_type === 'ECG') {
-          color = '#1D459A';
-          icon = <Activity className="w-3 h-3" />;
+          bgColor = 'rgba(29, 69, 154, 0.1)';
+          borderColor = 'rgba(29, 69, 154, 0.3)';
+          textColor = '#1D459A';
+          icon = <Activity className="w-4 h-4" />;
         } else if (record.scan_type === 'REPORT') {
-          color = '#F59E0B';
-          icon = <FileText className="w-3 h-3" />;
+          bgColor = 'rgba(245, 158, 11, 0.1)';
+          borderColor = 'rgba(245, 158, 11, 0.3)';
+          textColor = '#F59E0B';
+          icon = <FileText className="w-4 h-4" />;
         }
 
         return (
-          <Tag color={color} icon={icon}>
-            {type}
-          </Tag>
+          <div
+            className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg"
+            style={{
+              backgroundColor: bgColor,
+              border: `1px solid ${borderColor}`,
+            }}
+          >
+            <span style={{ color: textColor }}>{icon}</span>
+            <Text strong style={{ color: textColor, fontSize: '13px' }}>
+              {type}
+            </Text>
+          </div>
         );
       },
     },
@@ -194,7 +223,11 @@ const HealthReportList: React.FC<HealthReportListProps> = ({ onViewDetail }) => 
       title: 'Patient',
       dataIndex: 'patient_name',
       key: 'patient_name',
-      render: (name) => <Text>{name}</Text>,
+      render: (name) => (
+        <Text strong style={{ color: '#F7F7F7', fontSize: '14px' }}>
+          {name}
+        </Text>
+      ),
     },
     {
       title: 'Upload Date',
@@ -202,8 +235,8 @@ const HealthReportList: React.FC<HealthReportListProps> = ({ onViewDetail }) => 
       key: 'upload_date',
       render: (date) => (
         <div className="flex items-center space-x-2">
-          <Calendar className="w-4 h-4 text-gray-400" />
-          <Text style={{ color: '#9CA3AF' }}>{formatDate(date)}</Text>
+          <Clock className="w-4 h-4" style={{ color: '#6B7280' }} />
+          <Text style={{ color: '#9CA3AF', fontSize: '13px' }}>{formatDate(date)}</Text>
         </div>
       ),
     },
@@ -211,29 +244,44 @@ const HealthReportList: React.FC<HealthReportListProps> = ({ onViewDetail }) => 
       title: 'Status',
       dataIndex: 'is_analyzed',
       key: 'status',
-      width: 100,
+      width: 130,
       render: (isAnalyzed) => (
-        <Tag color={isAnalyzed ? 'success' : 'warning'}>
-          {isAnalyzed ? 'Analyzed' : 'Pending'}
-        </Tag>
+        <div
+          className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg"
+          style={{
+            backgroundColor: isAnalyzed ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+            border: isAnalyzed ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(245, 158, 11, 0.3)',
+          }}
+        >
+          {isAnalyzed ? (
+            <CheckCircle2 className="w-4 h-4" style={{ color: '#10B981' }} />
+          ) : (
+            <AlertCircle className="w-4 h-4" style={{ color: '#F59E0B' }} />
+          )}
+          <Text strong style={{ color: isAnalyzed ? '#10B981' : '#F59E0B', fontSize: '13px' }}>
+            {isAnalyzed ? 'Analyzed' : 'Pending'}
+          </Text>
+        </div>
       ),
     },
     {
       title: 'Action',
       key: 'action',
-      width: 100,
+      width: 120,
       render: (_, record) => (
         <Button
           type="primary"
-          size="small"
+          size="middle"
           icon={<Eye className="w-4 h-4" />}
           onClick={() => onViewDetail(record.id)}
           style={{
             backgroundColor: '#00B58E',
             borderColor: '#00B58E',
+            fontWeight: 500,
+            boxShadow: '0 2px 8px rgba(0, 181, 142, 0.25)',
           }}
         >
-          View
+          View Details
         </Button>
       ),
     },
@@ -241,29 +289,71 @@ const HealthReportList: React.FC<HealthReportListProps> = ({ onViewDetail }) => 
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <Title level={3} style={{ color: '#F7F7F7', marginBottom: 8 }}>
-            Health Reports
-          </Title>
-          <Text style={{ color: '#9CA3AF' }}>
-            View and manage your medical scan reports
-          </Text>
+      {/* Header with gradient background */}
+      <div
+        className="rounded-2xl p-8 shadow-lg"
+        style={{
+          background: 'linear-gradient(135deg, #1F2937 0%, #111827 100%)',
+          border: '1px solid #374151',
+        }}
+      >
+        <div className="flex justify-between items-center">
+          <div>
+            <div className="flex items-center space-x-3 mb-3">
+              <div
+                className="p-2 rounded-lg"
+                style={{
+                  backgroundColor: 'rgba(0, 181, 142, 0.1)',
+                  border: '1px solid rgba(0, 181, 142, 0.3)',
+                }}
+              >
+                <Sparkles className="w-6 h-6" style={{ color: '#00B58E' }} />
+              </div>
+              <Title level={2} style={{ color: '#F7F7F7', marginBottom: 0 }}>
+                Health Reports
+              </Title>
+            </div>
+            <Text style={{ color: '#9CA3AF', fontSize: '15px' }}>
+              AI-powered analysis of your medical scans and reports
+            </Text>
+            <div className="flex items-center space-x-6 mt-4">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#00B58E' }}></div>
+                <Text style={{ color: '#9CA3AF', fontSize: '13px' }}>
+                  {scans.filter(s => s.is_analyzed).length} Analyzed
+                </Text>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#F59E0B' }}></div>
+                <Text style={{ color: '#9CA3AF', fontSize: '13px' }}>
+                  {scans.filter(s => !s.is_analyzed).length} Pending
+                </Text>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#6B7280' }}></div>
+                <Text style={{ color: '#9CA3AF', fontSize: '13px' }}>
+                  Total: {scans.length}
+                </Text>
+              </div>
+            </div>
+          </div>
+          <Button
+            type="primary"
+            size="large"
+            icon={<Plus className="w-5 h-5" />}
+            onClick={() => setModalVisible(true)}
+            style={{
+              backgroundColor: '#00B58E',
+              borderColor: '#00B58E',
+              height: '48px',
+              fontSize: '15px',
+              fontWeight: 500,
+              boxShadow: '0 4px 12px rgba(0, 181, 142, 0.3)',
+            }}
+          >
+            Upload New Scan
+          </Button>
         </div>
-        <Button
-          type="primary"
-          size="large"
-          icon={<Plus className="w-4 h-4" />}
-          onClick={() => setModalVisible(true)}
-          style={{
-            backgroundColor: '#00B58E',
-            borderColor: '#00B58E',
-            height: '44px',
-          }}
-        >
-          New Case
-        </Button>
       </div>
 
       {/* Reports Table */}
@@ -293,9 +383,24 @@ const HealthReportList: React.FC<HealthReportListProps> = ({ onViewDetail }) => 
       {/* New Case Modal */}
       <Modal
         title={
-          <div className="flex items-center space-x-2">
-            <Plus className="w-5 h-5" style={{ color: '#00B58E' }} />
-            <span style={{ color: '#F7F7F7' }}>Upload New Medical Scan</span>
+          <div className="flex items-center space-x-3">
+            <div
+              className="p-2 rounded-lg"
+              style={{
+                backgroundColor: 'rgba(0, 181, 142, 0.1)',
+                border: '1px solid rgba(0, 181, 142, 0.3)',
+              }}
+            >
+              <Sparkles className="w-5 h-5" style={{ color: '#00B58E' }} />
+            </div>
+            <div>
+              <div style={{ color: '#F7F7F7', fontSize: '18px', fontWeight: 600 }}>
+                Upload New Medical Scan
+              </div>
+              <div style={{ color: '#9CA3AF', fontSize: '13px', fontWeight: 400 }}>
+                AI will analyze and provide insights
+              </div>
+            </div>
           </div>
         }
         open={modalVisible}
@@ -306,18 +411,23 @@ const HealthReportList: React.FC<HealthReportListProps> = ({ onViewDetail }) => 
           setFormError('');
         }}
         footer={null}
-        width={600}
+        width={650}
         style={{
-          top: 50,
+          top: 40,
         }}
         styles={{
           content: {
             backgroundColor: '#1F2937',
             border: '1px solid #374151',
+            borderRadius: '16px',
           },
           header: {
             backgroundColor: '#1F2937',
             borderBottom: '1px solid #374151',
+            padding: '20px 24px',
+          },
+          body: {
+            padding: '24px',
           },
         }}
       >
