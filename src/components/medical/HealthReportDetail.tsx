@@ -72,7 +72,12 @@ const HealthReportDetail: React.FC<HealthReportDetailProps> = ({ scanId, onBack 
 
   const getDiagnosis = (scan: MedicalScanResponse) => {
     const diagnosis = scan.diagnosis;
-    return diagnosis || 'No diagnosis available';
+    if (!diagnosis) return 'No diagnosis available';
+
+    return diagnosis
+      .replace(/\s*-\s*/g, '\n- ')
+      .replace(/^\n/, '')
+      .trim();
   };
 
   if (loading) {
@@ -233,13 +238,21 @@ const HealthReportDetail: React.FC<HealthReportDetailProps> = ({ scanId, onBack 
                           Medical Diagnosis:
                         </Text>
                       </div>
-                      <div 
+                      <div
                         className="p-4 rounded-lg mb-4"
                         style={{ backgroundColor: '#1a1a1a', border: '1px solid #EF4444' }}
                       >
-                        <Text style={{ color: '#F7F7F7', fontSize: '16px', fontWeight: 500 }}>
+                        <pre style={{
+                          whiteSpace: 'pre-wrap',
+                          fontFamily: 'inherit',
+                          color: '#F7F7F7',
+                          fontSize: '16px',
+                          fontWeight: 500,
+                          margin: 0,
+                          lineHeight: '1.8'
+                        }}>
                           {getDiagnosis(scan)}
-                        </Text>
+                        </pre>
                       </div>
                       <div className="space-y-2">
                         <Text strong style={{ color: '#F7F7F7' }}>AI Model Used:</Text>
