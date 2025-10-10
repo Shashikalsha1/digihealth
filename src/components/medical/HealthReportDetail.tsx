@@ -24,7 +24,8 @@ import {
   Download,
   Sparkles,
   Brain,
-  Stethoscope
+  Stethoscope,
+  Eye
 } from 'lucide-react';
 import apiService from '../../services/apiService';
 import type { MedicalScanResponse } from '../../services/apiService';
